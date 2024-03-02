@@ -8,6 +8,8 @@ Mientras, la aplicación será la plataforma que proporcionará la interfaz y la
 
 # Prototipo de la interfaz
 ## Lanzador del juego
+![Prototipo de la primeras pantallas](/prototyping-files/launcher-02-03.jpg)
+
 1. Al abrir la aplicación por primera vez, los jugadores tendrán la opción de iniciar sesión o acceder de forma anónima, sin necesidad de registrarse.
 
 2. Una vez que el usuario esté registrado, o en caso de haberlo estado previamente, se presentará una pantalla que muestra todos los modos de juego disponibles, junto con un menú inferior que ofrece diversas opciones. Estas incluyen el catálogo de modos de juego, una sección para personalizar el perfil y una tienda donde los jugadores podrán adquirir cosméticos y privilegios. En esta pantalla, se encontrará un menú deslizable con los distintos juegos, lo que permitirá acceder fácilmente a cada uno de ellos. Además, habrá una opción de ajustes en la parte superior de la pantalla, donde los jugadores podrán acceder a guías de ayuda para comprender mejor el juego y modificar ajustes según sus preferencias.
