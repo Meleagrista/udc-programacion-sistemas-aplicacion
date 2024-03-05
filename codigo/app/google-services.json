@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "341560864323",
+    "project_id": "proyectops-2df58",
+    "storage_bucket": "proyectops-2df58.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341560864323:android:cb7283f7dd249a51f8eef6",
+        "android_client_info": {
+          "package_name": "com.cainzos.proyectofinal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJA73M-ztObEaoZiI01xDOk4JCDDrx7E8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
