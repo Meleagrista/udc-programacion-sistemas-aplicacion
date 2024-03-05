@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity{
 
     /*Variables varias*/
     FirebaseFirestore mFirestore;
@@ -48,11 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAuth = FirebaseAuth.getInstance();
 
         /*Creacion de elementos de la interfaz*/
-        setUp();
 
-    }
-
-    public void setUp() {
         /*---Asignacion de ids---*/
         //Botones
         registerButton = findViewById(R.id.registro);
@@ -63,27 +59,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         email = findViewById(R.id.Email);
         password = findViewById(R.id.Password);
 
-        /*---SetOnClickListener---*/
-        registerButton.setOnClickListener(this);
-        loginButton.setOnClickListener(this);
-        googleButton.setOnClickListener(this);
-        facebookButton.setOnClickListener(this);
-    }
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String emailAux = email.getText().toString().trim();
+                String passwordAux = password.getText().toString().trim();
 
-    @Override
-    public void onClick(View view) {
-        //Comprobamos que boton ha sido pulsado y actuamos en consecuencia
-        if (view.equals(registerButton)) { //Ha sido pulsado el boton de registrarse
-            String emailAux = email.getText().toString().trim();
-            String passwordAux = password.getText().toString().trim();
-            if (!emailAux.isEmpty() && !passwordAux.isEmpty()) {
-                registerUser(emailAux, passwordAux);
-            }else{
-                Toast.makeText(MainActivity.this, "Usuario o Contraseña vacios, introduzca valores validos", Toast.LENGTH_SHORT).show();
+                if (!emailAux.isEmpty() && !passwordAux.isEmpty()) {
+                    registerUser(emailAux, passwordAux);
+                }else{
+                    Toast.makeText(MainActivity.this, "Usuario o Contraseña vacios, introduzca valores validos", Toast.LENGTH_SHORT).show();
+                }
             }
-        } else if (view.equals(loginButton)) { //Ha sido pulsado el boton de inicioSesion
-
-        }
+        });
     }
 
     //Funcion para realizar el registro del usuario en caso de que los parametros no sean nulos
