@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">RON</string>
+    <string name="nombre_app">RON</string>
+    <string name="subtitulo_app">Tu app de fiestas favorita</string>
+    <string name="correo_electronico">Correo Electronico</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="iniciar_sesion">Iniciar Sesion</string>
+    <string name="boton_registro">Registrarse</string>
+</resources>
