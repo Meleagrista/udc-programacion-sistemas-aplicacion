@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (view.equals(registerButton)) { //Ha sido pulsado el boton de registrarse
             String emailAux = email.getText().toString().trim();
             String passwordAux = password.getText().toString().trim();
-            if (!emailAux.isEmpty() || !passwordAux.isEmpty()) {
+            if (!emailAux.isEmpty() && !passwordAux.isEmpty()) {
                 registerUser(emailAux, passwordAux);
             }else{
                 Toast.makeText(MainActivity.this, "Usuario o Contraseña vacios, introduzca valores validos", Toast.LENGTH_SHORT).show();
