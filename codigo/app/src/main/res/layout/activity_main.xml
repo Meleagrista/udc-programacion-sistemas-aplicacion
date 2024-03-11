@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@drawable/fondo_negro"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
 
     <LinearLayout
         android:id="@+id/layout_principal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/social_media_layout"
         tools:ignore="NotSibling">
@@ -103,17 +102,25 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="@drawable/boton_redondo"
             android:text="@string/boton_registro"
-            android:textColor="@color/white"
-            />
+            android:textColor="@color/white" />
 
+        <Button
+            android:id="@+id/anonimo"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/transparent"
+            android:text="@string/boton_invitado"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/social_media_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
@@ -122,13 +129,13 @@
         <LinearLayout
             android:id="@+id/buttons_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="53dp"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/facebook"
                 android:layout_width="45dp"
-                android:layout_height="match_parent"
+                android:layout_height="45dp"
                 android:layout_marginStart="130dp"
                 android:layout_weight="1"
                 android:background="@drawable/boton_redes_sociales_rounded"
@@ -157,4 +164,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

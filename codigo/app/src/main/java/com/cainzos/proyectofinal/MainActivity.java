@@ -3,22 +3,16 @@ package com.cainzos.proyectofinal;
 import androidx.activity.result.ActivityResultLauncher;
 import com.cainzos.proyectofinal.databinding.ActivityMainBinding;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,7 +27,7 @@ public class MainActivity extends AppCompatActivity{
     FirebaseAuth mAuth;
 
     /*Inicializamos los elementos del layout*/
-    Button registerButton, loginButton;
+    Button registerButton, loginButton, anonymousButton;
     ImageButton googleButton, facebookButton;
     EditText password, email;
 
@@ -61,6 +55,7 @@ public class MainActivity extends AppCompatActivity{
         loginButton = binding.inicioSesion;
         googleButton = binding.google;
         facebookButton = binding.facebook;
+        anonymousButton = binding.anonimo;
         //Textos
         email = binding.Email;
         password = binding.Password;
@@ -87,6 +82,11 @@ public class MainActivity extends AppCompatActivity{
             }else{
                 loginUser(emailAux, passwordAux);
             }
+        });
+
+        /*---Logica cuando se pulsa el boton de entrar como anonimo---*/
+        anonymousButton.setOnClickListener(view -> {
+            loginAnonymous();
         });
     }
 
@@ -130,5 +130,14 @@ public class MainActivity extends AppCompatActivity{
                 Toast.makeText(MainActivity.this, "Error al crear el usuario: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void loginAnonymous(){
+        mAuth.signInAnonymously().addOnCompleteListener(task -> {
+           if(task.isSuccessful()){
+               FirebaseUser user = mAuth.getCurrentUser();
+               startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+           }
+        }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error al acceder", Toast.LENGTH_SHORT).show());
     }
 }
