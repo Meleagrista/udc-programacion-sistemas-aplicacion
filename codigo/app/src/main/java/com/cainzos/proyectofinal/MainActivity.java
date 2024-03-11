@@ -1,14 +1,24 @@
 package com.cainzos.proyectofinal;
 
+import androidx.activity.result.ActivityResultLauncher;
+import com.cainzos.proyectofinal.databinding.ActivityMainBinding;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,7 +28,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity{
 
-    /*Variables varias*/
+    /*Variables firebase*/
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
 
@@ -27,12 +37,19 @@ public class MainActivity extends AppCompatActivity{
     ImageButton googleButton, facebookButton;
     EditText password, email;
 
+    /*Variables intents*/
+    private ActivityResultLauncher<Intent> myStartActivityForResult;
+
+    /*Bindings*/
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
+        /*---Gestion de firebase---*/
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
@@ -40,23 +57,49 @@ public class MainActivity extends AppCompatActivity{
 
         /*---Asignacion de ids---*/
         //Botones
-        registerButton = findViewById(R.id.registro);
-        loginButton = findViewById(R.id.inicio_sesion);
-        googleButton = findViewById(R.id.google);
-        facebookButton = findViewById(R.id.facebook);
+        registerButton = binding.registro;
+        loginButton = binding.inicioSesion;
+        googleButton = binding.google;
+        facebookButton = binding.facebook;
         //Textos
-        email = findViewById(R.id.Email);
-        password = findViewById(R.id.Password);
+        email = binding.Email;
+        password = binding.Password;
 
+        /*---Logica cuando se pulsa el boton de registro de usuario---*/
         registerButton.setOnClickListener(view -> {
             String emailAux = email.getText().toString().trim();
             String passwordAux = password.getText().toString().trim();
 
-            if (emailAux.isEmpty() && passwordAux.isEmpty()) {
+            if (emailAux.isEmpty() || passwordAux.isEmpty()) {
                 Toast.makeText(MainActivity.this, "Usuario o Contraseña vacios, introduzca valores validos", Toast.LENGTH_SHORT).show();
             }else{
                 registerUser(emailAux, passwordAux);
             }
+        });
+
+        /*---Logica cuando se pulsa el boton de inicio de sesion---*/
+        loginButton.setOnClickListener(view -> {
+            String emailAux = email.getText().toString().trim();
+            String passwordAux = password.getText().toString().trim();
+
+            if(emailAux.isEmpty() && passwordAux.isEmpty() ){
+                Toast.makeText(MainActivity.this, "Ingresa los datos para poder iniciar sesion", Toast.LENGTH_SHORT).show();
+            }else{
+                loginUser(emailAux, passwordAux);
+            }
+        });
+    }
+
+    private void loginUser(String emailAux, String passwordAux) {
+        mAuth.signInWithEmailAndPassword(emailAux, passwordAux).addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                finish();
+                startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+            }else{
+                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(MainActivity.this, "Error al iniciar sesion", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -75,7 +118,10 @@ public class MainActivity extends AppCompatActivity{
 
                     mFirestore.collection("user").document(id).set(map).addOnSuccessListener(unused -> {
                         finish();
-                        startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+                        myStartActivityForResult = registerForActivityResult(
+                                new ActivityResultContracts.StartActivityForResult(),
+                                result -> {}
+                        );
                     }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error al guardar el usuario en Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 } else {
                     Toast.makeText(MainActivity.this, "El usuario actual es nulo", Toast.LENGTH_SHORT).show();

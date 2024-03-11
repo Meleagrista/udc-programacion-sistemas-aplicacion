@@ -113,21 +113,22 @@
     <LinearLayout
         android:id="@+id/social_media_layout"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
+            android:id="@+id/buttons_layout"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/facebook"
                 android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="130dp"
                 android:layout_weight="1"
                 android:background="@drawable/boton_redes_sociales_rounded"
