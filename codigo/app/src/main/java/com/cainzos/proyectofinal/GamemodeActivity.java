@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.cainzos.proyectofinal.databinding.ActivityGamemodeBinding;
 import com.cainzos.proyectofinal.fragments.FriendsFragment;
@@ -49,4 +52,5 @@ public class GamemodeActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
     }
+
 }

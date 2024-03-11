@@ -7,4 +7,7 @@
     <string name="iniciar_sesion">Iniciar Sesion</string>
     <string name="boton_registro">Registrarse</string>
     <string name="boton_invitado">Iniciar como anonimo</string>
+    <string name="friends_fragment">Friends Fragment</string>
+    <string name="gamemode_fragment">Gamemode Fragment</string>
+    <string name="shop_fragment">Shop Fragment</string>
 </resources>

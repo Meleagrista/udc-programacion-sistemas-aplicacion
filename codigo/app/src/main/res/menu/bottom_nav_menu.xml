@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_item1"
-        android:title="Fragmento 1"
+        android:title="@string/friends_fragment"
         android:icon="@drawable/facebook_logo" />
     <item
         android:id="@+id/nav_item2"
-        android:title="Fragmento 2"
-        android:icon="@drawable/google_logo" />
+        android:title="@string/gamemode_fragment"
+        android:icon="@drawable/google_logo"/>
     <item
         android:id="@+id/nav_item3"
-        android:title="Fragmento 3"
+        android:title="@string/shop_fragment"
         android:icon="@drawable/logo_app" />
 </menu>
