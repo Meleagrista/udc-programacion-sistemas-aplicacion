@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_item1"
+        android:id="@+id/friends_item"
         android:title="@string/friends_fragment"
-        android:icon="@drawable/facebook_logo" />
+        android:icon="@drawable/perfil_amigos" />
     <item
-        android:id="@+id/nav_item2"
+        android:id="@+id/gamemode_item"
         android:title="@string/gamemode_fragment"
-        android:icon="@drawable/google_logo"/>
+        android:icon="@drawable/logo_app"/>
     <item
-        android:id="@+id/nav_item3"
+        android:id="@+id/shop_item"
         android:title="@string/shop_fragment"
-        android:icon="@drawable/logo_app" />
+        android:icon="@drawable/perfil_tienda" />
 </menu>

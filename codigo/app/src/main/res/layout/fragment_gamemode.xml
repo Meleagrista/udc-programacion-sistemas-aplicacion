@@ -7,18 +7,28 @@
     android:orientation="vertical"
     tools:context=".fragments.GamemodeFragment">
 
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/perfil_amigos"
+        android:background="@android:color/transparent"
+        android:scaleType="centerCrop"/>
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center">
+    </androidx.viewpager2.widget.ViewPager2>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabBackground="@drawable/tab_selector"
+        android:background="@android:color/transparent"
         app:tabGravity="center"
         app:tabIndicatorHeight="0dp"/>
 

@@ -17,6 +17,9 @@
         app:layout_constraintBottom_toTopOf="@id/social_media_layout"
         tools:ignore="NotSibling">
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
 
         <ImageView
             android:id="@+id/imageView5"
@@ -50,7 +53,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="60dp" />
+            android:layout_height="80dp" />
 
         <EditText
             android:id="@+id/Email"
