@@ -67,6 +67,12 @@ public class FriendsFragment extends Fragment {
     // Método para enviar la solicitud de amistad
     private void sendFriendRequest(String email) {
 
+        if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isAnonymous()) {
+            // El usuario ha iniciado sesión de forma anónima, mostrar un mensaje de error
+            Toast.makeText(getActivity(), "No puedes enviar solicitudes de amistad mientras estás registrado como usuario anónimo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Crear un mapa para almacenar la solicitud de amistad
         Map<String, Object> friendRequest = new HashMap<>();
         friendRequest.put("sender_email", mAuth.getCurrentUser().getEmail()); // Aquí pasamos el correo del remitente
@@ -83,59 +89,54 @@ public class FriendsFragment extends Fragment {
 
     // Método para cargar las solicitudes de amistad recibidas
     private void loadFriendRequests() {
-        // Consultar la colección friend_requests para obtener las solicitudes de amistad dirigidas al usuario actual
         db.collection("friend_requests")
                 .whereEqualTo("receiver_email", mAuth.getCurrentUser().getEmail())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        // Obtener el contenedor de solicitudes de amistad
                         LinearLayout container = rootView.findViewById(R.id.containerFriendRequests);
-                        // Limpiar el contenedor antes de agregar nuevas solicitudes
                         container.removeAllViews();
 
-                        // Iterar sobre los documentos de las solicitudes de amistad recibidas
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            // Obtener el correo electrónico del remitente de la solicitud de amistad
                             String senderEmail = document.getString("sender_email");
                             String status = document.getString("status");
 
-                            // Si la solicitud está pendiente, mostrarla en el LinearLayout
                             if (status.equals("pending")) {
-                                // Crear un nuevo LinearLayout para esta solicitud
-                                LinearLayout requestLayout = new LinearLayout(getActivity());
-                                requestLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                                requestLayout.setOrientation(LinearLayout.HORIZONTAL);
+                                // Inflar el diseño de la solicitud de amistad
+                                View requestView = LayoutInflater.from(getActivity()).inflate(R.layout.friend_request_item, container, false);
 
-                                // TextView para mostrar el correo electrónico del remitente
-                                TextView textView = new TextView(getActivity());
-                                textView.setText(senderEmail);
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-                                textView.setLayoutParams(params);
-                                requestLayout.addView(textView);
+                                // Obtener referencias a las vistas dentro del diseño inflado
+                                TextView textViewSenderEmail = requestView.findViewById(R.id.textViewSenderEmail);
+                                Button buttonAccept = requestView.findViewById(R.id.buttonAccept);
+                                Button buttonReject = requestView.findViewById(R.id.buttonReject);
 
-                                // Botones de aceptar y rechazar
-                                Button buttonAccept = new Button(getActivity());
-                                buttonAccept.setText(R.string.aceptar);
+                                // Establecer el correo electrónico del remitente
+                                textViewSenderEmail.setText(senderEmail);
+
+                                // Establecer OnClickListener para el botón Aceptar
                                 buttonAccept.setOnClickListener(v -> {
-                                    // Lógica para aceptar la solicitud de amistad
-                                    // Aquí debes implementar lo que sucede cuando se acepta la solicitud
+                                    document.getReference().update("status", "accepted")
+                                            .addOnSuccessListener(aVoid -> {
+                                                container.removeView(requestView);
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(getActivity(), "Error al aceptar la solicitud de amistad", Toast.LENGTH_SHORT).show();
+                                            });
                                 });
-                                requestLayout.addView(buttonAccept);
 
-                                Button buttonReject = new Button(getActivity());
-                                buttonReject.setText(R.string.rechazar);
+                                // Establecer OnClickListener para el botón Rechazar
                                 buttonReject.setOnClickListener(v -> {
-                                    // Lógica para rechazar la solicitud de amistad
-                                    // Aquí debes implementar lo que sucede cuando se rechaza la solicitud
+                                    document.getReference().update("status", "rejected")
+                                            .addOnSuccessListener(aVoid -> {
+                                                container.removeView(requestView);
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(getActivity(), "Error al rechazar la solicitud de amistad", Toast.LENGTH_SHORT).show();
+                                            });
                                 });
-                                requestLayout.addView(buttonReject);
 
-                                // Agregar el layout de la solicitud al contenedor
-                                container.addView(requestLayout);
+                                // Agregar la vista de la solicitud de amistad al contenedor
+                                container.addView(requestView);
                             }
                         }
                     } else {
