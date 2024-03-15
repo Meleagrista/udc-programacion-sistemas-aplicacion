@@ -10,4 +10,6 @@
     <string name="friends_fragment">Friends Fragment</string>
     <string name="gamemode_fragment">Gamemode Fragment</string>
     <string name="shop_fragment">Shop Fragment</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="rechazar">Rechazar</string>
 </resources>
