@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import com.cainzos.proyectofinal.databinding.ActivityMainBinding;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,6 +43,10 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        /*---Inicializamos la toolbar---*/
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
 
         /*---Gestion de firebase---*/
         mFirestore = FirebaseFirestore.getInstance();
@@ -116,12 +121,10 @@ public class MainActivity extends AppCompatActivity{
                     map.put("email", email);
                     map.put("password", password);
 
-                    mFirestore.collection("user").document(id).set(map).addOnSuccessListener(unused -> {
+                    mFirestore.collection("users").document(id).set(map).addOnSuccessListener(unused -> {
+                        startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+                        // Cierra la actividad actual después de iniciar la actividad GamemodeActivity
                         finish();
-                        myStartActivityForResult = registerForActivityResult(
-                                new ActivityResultContracts.StartActivityForResult(),
-                                result -> {}
-                        );
                     }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error al guardar el usuario en Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 } else {
                     Toast.makeText(MainActivity.this, "El usuario actual es nulo", Toast.LENGTH_SHORT).show();

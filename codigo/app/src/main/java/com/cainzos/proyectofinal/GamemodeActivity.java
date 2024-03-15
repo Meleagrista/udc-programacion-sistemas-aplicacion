@@ -1,6 +1,7 @@
 package com.cainzos.proyectofinal;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,6 +23,10 @@ public class GamemodeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityGamemodeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        /*---Inicializamos la toolbar---*/
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
 
         fragmentManager = getSupportFragmentManager();
 

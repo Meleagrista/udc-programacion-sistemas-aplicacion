@@ -7,14 +7,6 @@
     android:orientation="vertical"
     tools:context=".fragments.GamemodeFragment">
 
-    <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:src="@drawable/perfil_amigos"
-        android:background="@android:color/transparent"
-        android:scaleType="centerCrop"/>
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
