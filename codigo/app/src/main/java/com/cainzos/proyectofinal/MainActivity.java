@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity{
                     map.put("id", id);
                     map.put("email", email);
                     map.put("password", password);
+                    map.put("username", "");
 
                     mFirestore.collection("users").document(id).set(map).addOnSuccessListener(unused -> {
                         startActivity(new Intent(MainActivity.this, GamemodeActivity.class));

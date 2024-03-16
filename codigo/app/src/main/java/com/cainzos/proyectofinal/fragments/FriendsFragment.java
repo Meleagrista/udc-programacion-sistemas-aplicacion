@@ -1,6 +1,7 @@
 package com.cainzos.proyectofinal.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import com.cainzos.proyectofinal.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.HashMap;
@@ -19,8 +22,8 @@ import java.util.Map;
 
 public class FriendsFragment extends Fragment {
 
-    private EditText editTextEmail;
-    private Button buttonSendRequest;
+    private EditText editTextEmail, editTextName;
+    private Button buttonSendRequest, buttonEditName;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private View rootView;
@@ -41,22 +44,101 @@ public class FriendsFragment extends Fragment {
         // Obtener referencias a los elementos de interfaz de usuario
         editTextEmail = rootView.findViewById(R.id.editTextEmail);
         buttonSendRequest = rootView.findViewById(R.id.buttonSendRequest);
+        editTextName = rootView.findViewById(R.id.editTextName);
+        buttonEditName = rootView.findViewById(R.id.editUserName);
+        editTextName.setEnabled(false);
 
-        // Cargar las solicitudes de amistad recibidas
-        loadFriendRequests();
+        // Obtener el nombre de usuario de Firestore y establecerlo en el EditText
+        setUserNameInEditText();
 
         // Lógica para enviar solicitudes de amistad al hacer clic en el botón
         buttonSendRequest.setOnClickListener(v -> {
             String email = editTextEmail.getText().toString().trim();
+            String userName = editTextName.getText().toString().trim();
 
             // Verificar que se haya ingresado un correo electrónico válido
             if (!isValidEmail(email)) {
                 Toast.makeText(getActivity(), "Por favor, ingresa un correo electrónico válido", Toast.LENGTH_SHORT).show();
                 return;
             }
-            sendFriendRequest(email);
+            sendFriendRequest(email, userName);
         });
+
+        // Lógica para modificar el nombre del usuario
+        buttonEditName.setOnClickListener(v -> {
+            if (!editTextName.isEnabled()) {
+                // Habilitar la edición del campo de nombre y cambiar el texto del botón a "Aceptar"
+                editTextName.setEnabled(true);
+                buttonEditName.setText("Aceptar");
+            } else {
+                // Obtener el nuevo nombre del campo de nombre
+                String newName = editTextName.getText().toString().trim();
+                // Actualizar el nombre en la base de datos
+                updateUserName(newName);
+                // Deshabilitar la edición del campo de nombre y restaurar el texto del botón
+                editTextName.setEnabled(false);
+                buttonEditName.setText("Editar");
+            }
+        });
+
+        // Cargar las solicitudes de amistad recibidas
+        loadFriendRequests();
+
         return rootView;
+    }
+
+    // Método para obtener y mostrar el nombre de usuario en el EditText
+    private void setUserNameInEditText() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            // Obtener la referencia al documento de usuario en Firestore
+            DocumentReference userRef = db.collection("users").document(userId);
+
+            // Obtener el nombre de usuario del documento de usuario
+            userRef.get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String username = documentSnapshot.getString("username");
+                            editTextName.setText(username);
+                        } else {
+                            Log.d("TAG", "El documento del usuario no existe");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("TAG", "Error al obtener el nombre de usuario: " + e.getMessage());
+                    });
+        }
+    }
+
+    // Método para actualizar el nombre de usuario en la base de datos
+    private void updateUserName(String newName) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String currentUserEmail = currentUser.getEmail();
+            // Consultar el documento de usuario correspondiente al correo electrónico actual
+            db.collection("users")
+                    .whereEqualTo("email", currentUserEmail)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            // Actualizar el campo de nombre con el nuevo valor
+                            documentSnapshot.getReference().update("username", newName)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(getActivity(), "Nombre de usuario actualizado correctamente", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getActivity(), "Error al actualizar el nombre de usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getActivity(), "Error al buscar el usuario en la base de datos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            Toast.makeText(getActivity(), "Usuario actual nulo", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Método para verificar si un correo electrónico es válido
@@ -65,7 +147,7 @@ public class FriendsFragment extends Fragment {
     }
 
     // Método para enviar la solicitud de amistad
-    private void sendFriendRequest(String email) {
+    private void sendFriendRequest(String email, String userName) {
 
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isAnonymous()) {
             // El usuario ha iniciado sesión de forma anónima, mostrar un mensaje de error
@@ -78,6 +160,7 @@ public class FriendsFragment extends Fragment {
         friendRequest.put("sender_email", mAuth.getCurrentUser().getEmail()); // Aquí pasamos el correo del remitente
         friendRequest.put("receiver_email", email);
         friendRequest.put("status", "pending"); // Indica que la solicitud está pendiente
+        friendRequest.put("user_name", userName);
 
         // Almacenar la solicitud de amistad en la base de datos
         db.collection("friend_requests")
