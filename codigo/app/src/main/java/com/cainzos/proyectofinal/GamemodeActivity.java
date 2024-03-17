@@ -6,12 +6,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.cainzos.proyectofinal.databinding.ActivityGamemodeBinding;
 import com.cainzos.proyectofinal.fragments.FriendsFragment;
 import com.cainzos.proyectofinal.fragments.GamemodeFragment;
 import com.cainzos.proyectofinal.fragments.ShopFragment;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class GamemodeActivity extends AppCompatActivity {
 
@@ -25,9 +29,9 @@ public class GamemodeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         /*---Inicializamos la toolbar---*/
-        Toolbar toolbar = binding.toolbar;
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = binding.toolbar;
+        //toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        //setSupportActionBar(toolbar);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -73,5 +77,32 @@ public class GamemodeActivity extends AppCompatActivity {
         }
 
         fragmentTransaction.commit();
+    }
+
+    /*---Inflar el menu de tres puntos---*/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_gamemode, menu);
+        return true;
+    }
+
+    /*---Gestionar las acciones de los botones del menu al ser pulsados---*/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            logout();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    /*---Cerrar sesion en firebase---*/
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }

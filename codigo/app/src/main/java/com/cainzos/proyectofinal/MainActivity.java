@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity{
         setContentView(binding.getRoot());
 
         /*---Inicializamos la toolbar---*/
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = binding.toolbar;
+        //setSupportActionBar(toolbar);
 
         /*---Gestion de firebase---*/
         mFirestore = FirebaseFirestore.getInstance();

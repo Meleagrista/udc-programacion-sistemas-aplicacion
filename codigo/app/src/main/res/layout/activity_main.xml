@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@drawable/fondo_negro"
+    android:orientation="vertical"
     android:fitsSystemWindows="true">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/transparent"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        tools:ignore="MissingConstraints" />
 
     <LinearLayout
         android:id="@+id/layout_principal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/social_media_layout"
         tools:ignore="NotSibling">
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
 
         <ImageView
             android:id="@+id/imageView5"
@@ -38,9 +27,6 @@
             android:layout_marginTop="50dp"
             app:srcCompat="@drawable/titulo_app" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="2dp" />
 
         <ImageView
             android:id="@+id/imageView6"
@@ -48,10 +34,6 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/subtitulo_app" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -62,7 +44,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="80dp" />
+            android:layout_height="30dp" />
 
         <EditText
             android:id="@+id/Email"
@@ -132,7 +114,7 @@
     <LinearLayout
         android:id="@+id/social_media_layout"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
@@ -176,4 +158,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
