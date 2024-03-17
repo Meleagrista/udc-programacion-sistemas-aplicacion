@@ -26,6 +26,7 @@ public class GamemodeActivity extends AppCompatActivity {
 
         /*---Inicializamos la toolbar---*/
         Toolbar toolbar = binding.toolbar;
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         setSupportActionBar(toolbar);
 
         fragmentManager = getSupportFragmentManager();

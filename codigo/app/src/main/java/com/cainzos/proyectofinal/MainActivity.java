@@ -93,13 +93,24 @@ public class MainActivity extends AppCompatActivity{
         anonymousButton.setOnClickListener(view -> {
             loginAnonymous();
         });
+
+        // Comprobar sesión al abrir la aplicación
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            redirectToGamemodeActivity();
+        }
+    }
+
+    private void redirectToGamemodeActivity() {
+        startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+        finish(); // Termina la actividad actual para evitar que el usuario regrese a ella usando el botón de retroceso
     }
 
     private void loginUser(String emailAux, String passwordAux) {
         mAuth.signInWithEmailAndPassword(emailAux, passwordAux).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
-                finish();
-                startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+                saveSessionInfo();
+                redirectToGamemodeActivity();
             }else{
                 Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
             }
@@ -107,6 +118,25 @@ public class MainActivity extends AppCompatActivity{
             Toast.makeText(MainActivity.this, "Error al iniciar sesion", Toast.LENGTH_SHORT).show();
         });
     }
+
+    private void saveSessionInfo() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            Map<String, Object> sessionData = new HashMap<>();
+            sessionData.put("userId", userId);
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("sessions").document(userId)
+                    .set(sessionData)
+                    .addOnSuccessListener(aVoid -> Log.d("_TAG", "Información de sesión guardada con éxito en Firestore"))
+                    .addOnFailureListener(e -> Log.e("_TAG", "Error al guardar la información de sesión en Firestore", e));
+        } else {
+            Log.e("_TAG", "El usuario actual es nulo");
+        }
+    }
+
 
     //Funcion para realizar el registro del usuario en caso de que los parametros no sean nulos
     private void registerUser(String email, String password){
