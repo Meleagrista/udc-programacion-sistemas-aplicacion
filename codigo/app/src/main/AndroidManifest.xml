@@ -15,9 +15,11 @@
         android:theme="@style/Theme.ProyectoFinal"
         tools:targetApi="31">
         <activity
+            android:name=".GameMode1Activity"
+            android:exported="false" />
+        <activity
             android:name=".GamemodeActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">
