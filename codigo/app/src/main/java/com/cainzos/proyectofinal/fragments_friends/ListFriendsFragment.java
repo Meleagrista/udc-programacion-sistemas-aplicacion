@@ -73,7 +73,7 @@ public class ListFriendsFragment extends Fragment {
     // Método para cargar los amigos de un usuario
     private void loadFriends() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
+        if (currentUser != null && !mAuth.getCurrentUser().isAnonymous()) {
             String currentUserEmail = currentUser.getEmail();
 
             db.collection("friend_requests")
@@ -98,21 +98,32 @@ public class ListFriendsFragment extends Fragment {
                         for (QueryDocumentSnapshot receiverDocumentSnapshot : receiverQueryDocumentSnapshots) {
                             String senderEmail = receiverDocumentSnapshot.getString("sender_email");
                             addFriendToLayout(senderEmail);
+
                         }
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(getActivity(), "Error al cargar los amigos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
-        } else {
+        } else if(mAuth.getCurrentUser().isAnonymous()) {
+            Toast.makeText(getActivity(), "Inicia sesion para poder tener amigos", Toast.LENGTH_SHORT).show();
+        }else {
             Toast.makeText(getActivity(), "Usuario actual nulo", Toast.LENGTH_SHORT).show();
         }
     }
 
     // Método para agregar un amigo al layout
     private void addFriendToLayout(String email) {
-        TextView textView = new TextView(getActivity());
-        textView.setText(email);
-        containerFriends.addView(textView);
+        db.collection("users").whereEqualTo("email", email).get().addOnSuccessListener(receiverQueryDocumentSnapshots->{
+            for (QueryDocumentSnapshot receiverDocumentSnapshot : receiverQueryDocumentSnapshots){
+                String userName = receiverDocumentSnapshot.getString("username");
+                if (userName == null || userName.isEmpty()) {
+                    userName = "Anonymous123";
+                }
+                TextView textView = new TextView(getActivity());
+                textView.setText(userName);
+                containerFriends.addView(textView);
+            }
+        });
     }
 
     // Método para obtener y mostrar el nombre de usuario en el EditText

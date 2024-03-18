@@ -8,7 +8,7 @@
     tools:context=".fragments_friends.ListPendingFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -18,6 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/white"
             android:hint="Nombre de usuario de tu amigo" />
 
         <!-- Botón para enviar solicitud -->
@@ -25,6 +26,8 @@
             android:id="@+id/buttonSendRequest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/boton_redondo"
+            android:textColor="@color/white"
             android:text="Enviar solicitud" />
 
     </LinearLayout>

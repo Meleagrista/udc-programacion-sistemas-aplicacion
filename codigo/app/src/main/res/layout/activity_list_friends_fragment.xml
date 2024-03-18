@@ -18,13 +18,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Introduce tu nombre de usuario" />
+            android:textColor="@color/white"
+            android:hint="Nombre de Usuario" />
 
         <Button
             android:id="@+id/editUserName"
             android:layout_width="wrap_content"
+            android:background="@drawable/boton_redondo"
             android:layout_height="wrap_content"
-            android:text="Editar" />
+            android:textColor="@color/white"
+            android:text="Editar"/>
 
     </LinearLayout>
 

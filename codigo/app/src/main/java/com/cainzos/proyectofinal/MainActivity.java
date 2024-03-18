@@ -2,9 +2,7 @@ package com.cainzos.proyectofinal;
 
 import androidx.activity.result.ActivityResultLauncher;
 import com.cainzos.proyectofinal.databinding.ActivityMainBinding;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,15 +42,9 @@ public class MainActivity extends AppCompatActivity{
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        /*---Inicializamos la toolbar---*/
-        //Toolbar toolbar = binding.toolbar;
-        //setSupportActionBar(toolbar);
-
         /*---Gestion de firebase---*/
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
-        /*Creacion de elementos de la interfaz*/
 
         /*---Asignacion de ids---*/
         //Botones
@@ -71,7 +63,7 @@ public class MainActivity extends AppCompatActivity{
             String passwordAux = password.getText().toString().trim();
 
             if (emailAux.isEmpty() || passwordAux.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Usuario o Contraseña vacios, introduzca valores validos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.error_elemento_vacio_iniciosesion, Toast.LENGTH_SHORT).show();
             }else{
                 registerUser(emailAux, passwordAux);
             }
@@ -83,7 +75,7 @@ public class MainActivity extends AppCompatActivity{
             String passwordAux = password.getText().toString().trim();
 
             if(emailAux.isEmpty() && passwordAux.isEmpty() ){
-                Toast.makeText(MainActivity.this, "Ingresa los datos para poder iniciar sesion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.error_elemento_vacio_registro, Toast.LENGTH_SHORT).show();
             }else{
                 loginUser(emailAux, passwordAux);
             }
@@ -112,10 +104,8 @@ public class MainActivity extends AppCompatActivity{
                 saveSessionInfo();
                 redirectToGamemodeActivity();
             }else{
-                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.error_msg, Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(MainActivity.this, "Error al iniciar sesion", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -128,7 +118,7 @@ public class MainActivity extends AppCompatActivity{
             sessionData.put("userId", userId);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("sessions").document(userId)
+            db.collection(getString(R.string.collection_path_session)).document(userId)
                     .set(sessionData)
                     .addOnSuccessListener(aVoid -> Log.d("_TAG", "Información de sesión guardada con éxito en Firestore"))
                     .addOnFailureListener(e -> Log.e("_TAG", "Error al guardar la información de sesión en Firestore", e));
@@ -152,16 +142,16 @@ public class MainActivity extends AppCompatActivity{
                     map.put("password", password);
                     map.put("username", "");
 
-                    mFirestore.collection("users").document(id).set(map).addOnSuccessListener(unused -> {
+                    mFirestore.collection(getString(R.string.collection_path_users)).document(id).set(map).addOnSuccessListener(unused -> {
                         startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
                         // Cierra la actividad actual después de iniciar la actividad GamemodeActivity
                         finish();
-                    }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error al guardar el usuario en Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    });
                 } else {
-                    Toast.makeText(MainActivity.this, "El usuario actual es nulo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.error_usr_null, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(MainActivity.this, "Error al crear el usuario: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.error_creating_user) + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -169,9 +159,8 @@ public class MainActivity extends AppCompatActivity{
     private void loginAnonymous(){
         mAuth.signInAnonymously().addOnCompleteListener(task -> {
            if(task.isSuccessful()){
-               FirebaseUser user = mAuth.getCurrentUser();
                startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
            }
-        }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error al acceder", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, R.string.error_login_anonymous, Toast.LENGTH_SHORT).show());
     }
 }
