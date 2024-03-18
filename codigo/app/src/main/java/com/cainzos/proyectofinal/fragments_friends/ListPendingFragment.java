@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ListPendingFragment extends Fragment {
 
@@ -165,9 +166,15 @@ public class ListPendingFragment extends Fragment {
 
     // Método para enviar la solicitud de amistad
     private void sendFriendRequest(String email) {
+
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isAnonymous()) {
             // El usuario ha iniciado sesión de forma anónima, mostrar un mensaje de error
             Toast.makeText(getActivity(), "No puedes enviar solicitudes de amistad mientras estás registrado como usuario anónimo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(mAuth.getCurrentUser() != null && Objects.equals(mAuth.getCurrentUser().getEmail(), email)){
+            Toast.makeText(getActivity(), "No puedes enviarte solicitudes de amistad a ti mismo", Toast.LENGTH_SHORT).show();
             return;
         }
         checkUserExists(email);
