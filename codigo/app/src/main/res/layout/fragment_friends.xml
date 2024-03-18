@@ -1,50 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
+    <!-- TextViews en la parte superior -->
     <LinearLayout
+        android:id="@+id/top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/userNameLayout"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editTextName"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/idHint"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Introduce tu nombre de usuario" />
+            android:text="ID" />
 
-        <Button
-            android:id="@+id/editUserName"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/idUser"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Editar" />
-
-
+            android:text="id tuya" />
     </LinearLayout>
 
-    <!-- EditText para introducir el correo del otro usuario -->
-    <EditText
-        android:id="@+id/editTextEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Nombre de usuario de tu amigo" />
-
-    <!-- Botón para enviar solicitud -->
-    <Button
-        android:id="@+id/buttonSendRequest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enviar solicitud" />
-
-    <!-- Contenedor para mostrar las solicitudes de amistad -->
+    <!-- Layout para los botones -->
     <LinearLayout
-        android:id="@+id/containerFriendRequests"
+        android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_below="@id/top_layout"
+        android:orientation="horizontal">
 
-</LinearLayout>
+        <Button
+            android:id="@+id/friendsButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Amigos" />
+
+        <Button
+            android:id="@+id/pendingList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Solicitudes de Amistad" />
+    </LinearLayout>
+
+    <!-- Fragmento container -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttons_layout">
+    </FrameLayout>
+</RelativeLayout>
