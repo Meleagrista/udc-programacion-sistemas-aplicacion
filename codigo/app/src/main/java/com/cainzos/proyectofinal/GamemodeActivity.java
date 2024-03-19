@@ -28,11 +28,6 @@ public class GamemodeActivity extends AppCompatActivity {
         binding = ActivityGamemodeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        /*---Inicializamos la toolbar---*/
-        //Toolbar toolbar = binding.toolbar;
-        //toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        //setSupportActionBar(toolbar);
-
         fragmentManager = getSupportFragmentManager();
 
         /*---Valor de los parametros cuando se inicia la actividad---*/

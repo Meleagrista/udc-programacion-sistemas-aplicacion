@@ -21,49 +21,44 @@ public class GameMode1Activity extends AppCompatActivity {
 
     void showDialog() {
         final String[] opciones = {"EZ PZ", "NORMAL", "TRYHARD"};
-        final EditText input = new EditText(this);
-        input.setHint("Ingresar número de jugadores");
 
+        // Inflar el diseño XML del diálogo
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.players_dialog);
+        dialog.setCanceledOnTouchOutside(false);
 
         final TextView optionSelected = dialog.findViewById(R.id.dificultySelected);
+        final EditText input = dialog.findViewById(R.id.input); // Encontrar el EditText dentro del diálogo
         Button acceptButton = dialog.findViewById(R.id.acceptButton);
         Button backButton = dialog.findViewById(R.id.backButton);
 
         dialog.show();
 
+        backButton.setOnClickListener(v -> finish());
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
+        optionSelected.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(GameMode1Activity.this);
+            builder.setTitle("Selecciona la DIFICULTAD");
+            builder.setItems(opciones, (dialogInterface, i) -> optionSelected.setText(opciones[i]));
+            builder.show();
         });
 
-        optionSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        acceptButton.setOnClickListener(v -> {
+            String numeroIngresado = input.getText().toString();
+            try {
+                int numero = Integer.parseInt(numeroIngresado);
+                // Aquí puedes hacer algo con el número entero
+                dialog.dismiss(); // Cerrar el diálogo
+            } catch (NumberFormatException e) {
+                // El valor ingresado no es un entero
                 AlertDialog.Builder builder = new AlertDialog.Builder(GameMode1Activity.this);
-                builder.setTitle("Selecciona la DIFICULTAD");
-                builder.setItems(opciones, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        optionSelected.setText(opciones[i]); // Mostrar la opción seleccionada en el diálogo personalizado
-                    }
+                builder.setTitle("Error");
+                builder.setMessage("Por favor, ingrese un número entero válido.");
+                builder.setPositiveButton("OK", (dialogInterface, i) -> {
+                    // No hacer nada o manejar la situación como prefieras
                 });
                 builder.show();
             }
         });
-
-        acceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String numeroIngresado = input.getText().toString();
-                // Manejar el número ingresado aquí
-                dialog.dismiss(); // Cerrar el diálogo
-            }
-        });
     }
-
 }

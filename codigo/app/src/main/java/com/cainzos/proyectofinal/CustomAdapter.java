@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
-    private final int[] items = {R.drawable.previa, R.drawable.proximamente, R.drawable.proximamente};
+    private static final int[] items = {R.drawable.previa, R.drawable.proximamente, R.drawable.proximamente};
 
 
     @NonNull
@@ -47,20 +47,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         void bind(int imageResId) {
             imageButton.setImageResource(imageResId);
-            imageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position == 0){
-                        // Abrir una nueva actividad aquí
-
-                        Intent intent = new Intent(v.getContext(), GameMode1Activity.class);
-                        v.getContext().startActivity(intent);
-                    } else if(position == 1){
-                        Toast.makeText(v.getContext(), "PROXIMAMENTE...", Toast.LENGTH_SHORT).show();
-                    }else if(position == 2){
-                        Toast.makeText(v.getContext(), "PROXIMAMENTE...", Toast.LENGTH_SHORT).show();
-                    }
+            imageButton.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (items[position] == R.drawable.previa){
+                    Intent intent = new Intent(v.getContext(), GameMode1Activity.class);
+                    v.getContext().startActivity(intent);
+                } else if(items[position] == R.drawable.proximamente){
+                    Toast.makeText(v.getContext(), "PROXIMAMENTE...", Toast.LENGTH_SHORT).show();
                 }
             });
         }
