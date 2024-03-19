@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity{
             String emailAux = email.getText().toString().trim();
             String passwordAux = password.getText().toString().trim();
 
-            if (emailAux.isEmpty() || passwordAux.isEmpty()) {
+            if (emailAux.isEmpty() || passwordAux.isEmpty()) { //Comprobamos que el correo o la contraseña sean nulas
                 Toast.makeText(MainActivity.this, R.string.error_elemento_vacio_iniciosesion, Toast.LENGTH_SHORT).show();
             }else{
                 registerUser(emailAux, passwordAux);
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity{
             String emailAux = email.getText().toString().trim();
             String passwordAux = password.getText().toString().trim();
 
-            if(emailAux.isEmpty() && passwordAux.isEmpty() ){
+            if(emailAux.isEmpty() || passwordAux.isEmpty() ){ //Comprobamos que el correo o la contraseña sean nulas
                 Toast.makeText(MainActivity.this, R.string.error_elemento_vacio_registro, Toast.LENGTH_SHORT).show();
             }else{
                 loginUser(emailAux, passwordAux);
@@ -86,22 +86,24 @@ public class MainActivity extends AppCompatActivity{
             loginAnonymous();
         });
 
-        // Comprobar sesión al abrir la aplicación
+        /*---Comprobar sesión al abrir la aplicación---*/
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             redirectToGamemodeActivity();
         }
     }
 
+    /*---Funcion que se encarga de dirigir directamente a la siguiente Actividad en caso de que ya hubiese una sesion guardada---*/
     private void redirectToGamemodeActivity() {
         startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
         finish(); // Termina la actividad actual para evitar que el usuario regrese a ella usando el botón de retroceso
     }
 
+    /*---Funcion para loguear a un usuario---*/
     private void loginUser(String emailAux, String passwordAux) {
         mAuth.signInWithEmailAndPassword(emailAux, passwordAux).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
-                saveSessionInfo();
+                saveSessionInfo(); //Una vez iniciada la sesion se registran los datos de sesion para cuando vuelva a abrirse la app
                 redirectToGamemodeActivity();
             }else{
                 Toast.makeText(MainActivity.this, R.string.error_msg, Toast.LENGTH_SHORT).show();
@@ -109,6 +111,7 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    /*---Funcion para recuperar la sesion anterior del usuario en caso de haber cerrado y vuelto a abrir la app---*/
     private void saveSessionInfo() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -128,20 +131,23 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    //Funcion para realizar el registro del usuario en caso de que los parametros no sean nulos
+    /*--- Funcion para realizar el registro del usuario en caso de que los parametros no sean nulos ---*/
     private void registerUser(String email, String password){
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d("_TAG", "Tarea realiazda con exito");
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
+                    //Obtenemos el Id del usuario
                     String id = user.getUid();
+                    //Creamos un map con todos los parametros del usuario para poder almacenarlo
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", id);
                     map.put("email", email);
                     map.put("password", password);
                     map.put("username", "");
 
+                    //Registra al usuario en la base de datos y llama a la actividad de Gamemode
                     mFirestore.collection(getString(R.string.collection_path_users)).document(id).set(map).addOnSuccessListener(unused -> {
                         startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
                         // Cierra la actividad actual después de iniciar la actividad GamemodeActivity
@@ -156,6 +162,7 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    /*---Funcion para registrar a un usuario de forma anonima---*/
     private void loginAnonymous(){
         mAuth.signInAnonymously().addOnCompleteListener(task -> {
            if(task.isSuccessful()){

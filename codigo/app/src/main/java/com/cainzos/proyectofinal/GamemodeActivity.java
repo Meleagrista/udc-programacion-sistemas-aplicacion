@@ -19,7 +19,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class GamemodeActivity extends AppCompatActivity {
 
+    /*---Bindings---*/
     private ActivityGamemodeBinding binding;
+
+    /*---Variable para gestionar los distintos fragmentos que se pueden mostrar---*/
     private FragmentManager fragmentManager;
 
     @Override
@@ -40,11 +43,11 @@ public class GamemodeActivity extends AppCompatActivity {
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if(id == R.id.friends_item){
+            if(id == R.id.friends_item){ //Caso en el que se pulse el item de friends
                 replaceFragment(new FriendsFragment(), "friends");
-            }else if(id == R.id.gamemode_item){
+            }else if(id == R.id.gamemode_item){ //Caso en el que se pulse el item de gamemode
                 replaceFragment(new GamemodeFragment(), "gamemode");
-            }else if(id == R.id.shop_item){
+            }else if(id == R.id.shop_item){ //Caso en el que se pulse el item de shop
                 replaceFragment(new ShopFragment(), "shop");
             }
             return true;
@@ -86,6 +89,7 @@ public class GamemodeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        //Gestionamos las distintas opciones del menu de tres puntos
         if (id == R.id.action_logout) {
             logout();
             return true;

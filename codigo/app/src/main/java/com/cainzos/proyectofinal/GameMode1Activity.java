@@ -28,7 +28,7 @@ public class GameMode1Activity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
 
         final TextView optionSelected = dialog.findViewById(R.id.dificultySelected);
-        final EditText input = dialog.findViewById(R.id.input); // Encontrar el EditText dentro del diálogo
+        final EditText input = dialog.findViewById(R.id.input);
         Button acceptButton = dialog.findViewById(R.id.acceptButton);
         Button backButton = dialog.findViewById(R.id.backButton);
 
@@ -47,8 +47,19 @@ public class GameMode1Activity extends AppCompatActivity {
             String numeroIngresado = input.getText().toString();
             try {
                 int numero = Integer.parseInt(numeroIngresado);
-                // Aquí puedes hacer algo con el número entero
-                dialog.dismiss(); // Cerrar el diálogo
+                if (numero <= 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GameMode1Activity.this);
+                    builder.setTitle("Error");
+                    builder.setMessage("Por ahora no existe el numero de personas negativo ni 0 :(.");
+                    builder.show();
+                } else if(numero > 10) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GameMode1Activity.this);
+                    builder.setTitle("Error");
+                    builder.setMessage("El máximo de jugadores es 10.");
+                    builder.show();
+                }else{
+                    dialog.dismiss(); // Cerrar el diálogo
+                }
             } catch (NumberFormatException e) {
                 // El valor ingresado no es un entero
                 AlertDialog.Builder builder = new AlertDialog.Builder(GameMode1Activity.this);

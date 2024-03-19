@@ -1,8 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
     android:orientation="vertical">
-
 
 
     <TextView
@@ -34,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="@string/empty_numplayer" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -42,13 +46,17 @@
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/atras" />
+            android:background="@drawable/boton_redondo"
+            android:text="@string/atras"
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/acceptButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/aceptar" />
+            android:background="@drawable/boton_redondo"
+            android:text="@string/aceptar"
+            android:textColor="@color/white"/>
 
         </LinearLayout>
 

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.cainzos.proyectofinal.R;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -211,6 +212,14 @@ public class ListPendingFragment extends Fragment {
                                     document.getReference().update("status", "accepted")
                                             .addOnSuccessListener(aVoid -> {
                                                 container.removeView(requestView);
+                                                // Mostrar Snackbar con opción "Undo" al aceptar la solicitud
+                                                Snackbar snackbar = Snackbar.make(rootView, "Solicitud de amistad aceptada", Snackbar.LENGTH_LONG);
+                                                snackbar.setAction("Undo", v1 -> {
+                                                    // Si el usuario hace clic en "Undo", revertir la acción actualizando el estado de la solicitud a "pending"
+                                                    document.getReference().update("status", "pending");
+                                                    container.addView(requestView); // Añadir de nuevo la vista de la solicitud
+                                                });
+                                                snackbar.show();
                                             })
                                             .addOnFailureListener(e -> {
                                                 Toast.makeText(getActivity(), "Error al aceptar la solicitud de amistad", Toast.LENGTH_SHORT).show();
@@ -222,11 +231,20 @@ public class ListPendingFragment extends Fragment {
                                     document.getReference().update("status", "rejected")
                                             .addOnSuccessListener(aVoid -> {
                                                 container.removeView(requestView);
+                                                // Mostrar Snackbar con opción "Undo" al rechazar la solicitud
+                                                Snackbar snackbar = Snackbar.make(rootView, "Solicitud de amistad rechazada", Snackbar.LENGTH_LONG);
+                                                snackbar.setAction("Undo", v1 -> {
+                                                    // Si el usuario hace clic en "Undo", revertir la acción actualizando el estado de la solicitud a "pending"
+                                                    document.getReference().update("status", "pending");
+                                                    container.addView(requestView); // Añadir de nuevo la vista de la solicitud
+                                                });
+                                                snackbar.show();
                                             })
                                             .addOnFailureListener(e -> {
                                                 Toast.makeText(getActivity(), "Error al rechazar la solicitud de amistad", Toast.LENGTH_SHORT).show();
                                             });
                                 });
+
 
                                 // Agregar la vista de la solicitud de amistad al contenedor
                                 container.addView(requestView);
