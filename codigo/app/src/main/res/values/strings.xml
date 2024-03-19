@@ -12,4 +12,9 @@
     <string name="shop_fragment">Shop Fragment</string>
     <string name="aceptar">Aceptar</string>
     <string name="rechazar">Rechazar</string>
+    <string name="empty_numplayer">Ingrese el número de jugadores</string>
+    <string name="atras">Atrás</string>
+    <string name="opciones">OPCIONES</string>
+    <string name="ask_numplaters">Indica el número de jugadores</string>
+    <string name="choose_dif_text">Selecciona la dificultad</string>
 </resources>
