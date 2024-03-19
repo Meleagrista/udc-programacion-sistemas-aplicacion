@@ -23,4 +23,9 @@
     <string name="login_toget_id_msg">Inicia sesion para tener un ID</string>
     <string name="collection_path_users">users</string>
     <string name="collection_path_session">sessions</string>
+    <string name="empty_numplayer">Ingrese el número de jugadores</string>
+    <string name="atras">Atrás</string>
+    <string name="opciones">OPCIONES</string>
+    <string name="ask_numplaters">Indica el número de jugadores</string>
+    <string name="choose_dif_text">Selecciona la dificultad</string>
 </resources>
