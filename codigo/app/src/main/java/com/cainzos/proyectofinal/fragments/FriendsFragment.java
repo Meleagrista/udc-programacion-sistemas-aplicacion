@@ -21,10 +21,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class FriendsFragment extends Fragment {
 
     private View rootView;
-    private Button friendsButton;
-    private Button pendingButton;
+
+    /*Asignacion de ids*/
+    //Botones
+    private Button friendsButton, pendingButton;
+    //TextViews
     private TextView idText;
 
+    /*Variables firebase*/
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
 
@@ -37,13 +41,16 @@ public class FriendsFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_friends, container, false);
 
+        //FindViews
         friendsButton = rootView.findViewById(R.id.friendsButton);
         pendingButton = rootView.findViewById(R.id.pendingList);
         idText = rootView.findViewById(R.id.idUser);
 
+        //Obtenemos las intancias de Firebase
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
+        //Cargamos la Id del usuario para mostrarla por pantalla
         loadUserId();
 
         friendsButton.setOnClickListener(v -> loadFragment(new ListFriendsFragment()));
@@ -53,6 +60,7 @@ public class FriendsFragment extends Fragment {
         return rootView;
     }
 
+    /*---Funcion para cargar el ID del usuario en el TextView---*/
     private void loadUserId() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && !mAuth.getCurrentUser().isAnonymous()) {
@@ -69,10 +77,11 @@ public class FriendsFragment extends Fragment {
                         }
                     });
         }else{
-            idText.setText(R.string.login_toget_id_msg);
+            idText.setText(R.string.login_toget_id_msg); //En el caso de ser usuario anonimo se mostrara esto
         }
     }
 
+    /*---Funcion para gestionar los fragmentos---*/
     private void loadFragment(Fragment fragment) {
         // Cargar el fragmento dado en el contenedor del fragmento
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
