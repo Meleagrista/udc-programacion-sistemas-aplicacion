@@ -1,4 +1,5 @@
 <resources>
+    <!-- Strings app y MainActivity -->
     <string name="app_name">RON</string>
     <string name="nombre_app">RON</string>
     <string name="subtitulo_app">Tu app de fiestas favorita</string>
@@ -7,27 +8,37 @@
     <string name="iniciar_sesion">Iniciar Sesion</string>
     <string name="boton_registro">Registrarse</string>
     <string name="boton_invitado">Iniciar como anonimo</string>
+
+    <!-- Strings fragments GamemodeActivity -->
     <string name="friends_fragment">Friends Fragment</string>
     <string name="gamemode_fragment">Gamemode Fragment</string>
     <string name="shop_fragment">Shop Fragment</string>
+
+    <!-- Strings genericos -->
     <string name="aceptar">Aceptar</string>
     <string name="rechazar">Rechazar</string>
+    <string name="atras">Atrás</string>
+    <string name="opciones">OPCIONES</string>
 
+    <!-- Strings de errores -->
     <string name="error_elemento_vacio_registro">Usuario o Contraseña vacios, introduzca valores validos</string>
     <string name="error_elemento_vacio_iniciosesion">Ingresa los datos para poder iniciar sesion</string>
     <string name="error_msg">Error</string>
     <string name="error_usr_null">El usuario actual es nulo</string>
     <string name="error_creating_user">"Error al crear el usuario: "</string>
     <string name="error_login_anonymous">Error al acceder</string>
-
+    <string name="empty_numplayer">Ingrese el número de jugadores</string>
     <string name="login_toget_id_msg">Inicia sesion para tener un ID</string>
+
+    <!-- Strings colecciones base de datos -->
     <string name="collection_path_users">users</string>
     <string name="collection_path_session">sessions</string>
-    <string name="empty_numplayer">Ingrese el número de jugadores</string>
-    <string name="atras">Atrás</string>
-    <string name="opciones">OPCIONES</string>
-    <string name="ask_numplaters">Indica el número de jugadores</string>
+
+    <!-- Strings dialogo modos de juego -->
+    <string name="ask_numplayers">Indica el número de jugadores</string>
     <string name="choose_dif_text">Selecciona la dificultad</string>
+
+    <!-- Strings ListFriendsFragment -->
     <string name="id_text">TU ID: </string>
     <string name="show_id">id tuya</string>
     <string name="friends_list_button">Amigos</string>
