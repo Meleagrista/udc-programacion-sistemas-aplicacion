@@ -25,22 +25,22 @@ El modo de juego principal consiste en un desafío de pruebas y preguntas con di
 # Registro de desarrollo
 ## Snapshot 20/03/2024
 ### Inicio de sesión
-![Pantalla de inicio de sesión](/design-files/screenshots/inicio-2024-03-20.png)
+<img src="/design-files/screenshots/inicio-2024-03-20.png" alt="Pantalla de inicio de sesión" width="200">
 
 Permite registrarte e iniciar sesión, actualmente estamos usando una base de datos manejada por FireBase.
 
 ### Menú principal
-![Pantalla de principal](/design-files/screenshots/menu-2024-03-20.png)
+<img src="/design-files/screenshots/menu-2024-03-20.png" alt="Pantalla de principal" width="200">
 
 Tiene un menu de navgeación en la barra inferior que permite ir al menú de amistades o a la tienda (aún no está implementada). En la parte superior, en el icono de mas opciones se podría cerrar la sesión o ir a la configuración (aún no está implementada).
 En el medio tenemos el menú deslizable donde hay tres opciones, unicamente una esta operativa.
 
 ### Amigos
-![Pantalla de amistades](/design-files/screenshots/amigos-2024-03-20.png)
+<img src="/design-files/screenshots/amigos-2024-03-20.png" alt="Pantalla de amistades" width="200">
 
 Permite aceptar y enviar solicitudes y ver tus amigos añadidos.
 
 ### Creación de sala
-![Pantalla de creación de sala](/design-files/screenshots/sala-2024-03-20.png)
+<img src="/design-files/screenshots/sala-2024-03-20.png" alt="Pantalla de creación de sala" width="200">
 
 Un pantalla temporal, falta un paso intermedio en la navegación, que sería la creación de una sala multijugador.
