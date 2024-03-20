@@ -1,117 +1,108 @@
 package com.cainzos.proyectofinal.fragments_friends;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import com.cainzos.proyectofinal.R;
+
+import com.cainzos.proyectofinal.databinding.ActivityListPendingFragmentBinding;
+import com.cainzos.proyectofinal.databinding.FriendRequestItemBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class ListPendingFragment extends Fragment {
 
-    private EditText editTextEmail;
-    private Button buttonSendRequest;
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-    private View rootView;
+    private ActivityListPendingFragmentBinding binding; // View binding for this fragment
+    private FriendRequestItemBinding friends_binding; // View binding for friend request items
+    private FirebaseFirestore db; // Firebase Firestore instance
+    private FirebaseAuth mAuth; // Firebase authentication instance
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.activity_list_pending_fragment, container, false);
+        binding = ActivityListPendingFragmentBinding.inflate(getLayoutInflater()); // Inflate the layout for this fragment
+        friends_binding = FriendRequestItemBinding.inflate(getLayoutInflater());
 
-        // Obtener instancia de FirebaseFirestore y FirebaseAuth
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance(); // Initialize Firebase Firestore instance
+        mAuth = FirebaseAuth.getInstance(); // Initialize Firebase authentication instance
 
-        // Obtener referencias a los elementos de interfaz de usuario
-        editTextEmail = rootView.findViewById(R.id.editTextEmail);
-        buttonSendRequest = rootView.findViewById(R.id.buttonSendRequest);
+        // Set click listener for send request button
+        binding.buttonSendRequest.setOnClickListener(v -> {
+            String email = binding.editTextEmail.getText().toString().trim();
 
-        // Lógica para enviar solicitudes de amistad al hacer clic en el botón
-        buttonSendRequest.setOnClickListener(v -> {
-            String email = editTextEmail.getText().toString().trim();
-
-            // Verificar que se haya ingresado un correo electrónico válido
-            if (!isValidEmail(email)) {
-                Toast.makeText(getActivity(), "Por favor, ingresa un correo electrónico válido", Toast.LENGTH_SHORT).show();
+            if (!isValidEmail(email)) { // Validate email format
+                Toast.makeText(getActivity(), "Por favor, ingresa un correo electrónico valido", Toast.LENGTH_SHORT).show();
                 return;
             }
-            sendFriendRequest(email);
+            sendFriendRequest(email); // Send friend request
         });
 
-        // Cargar las solicitudes de amistad recibidas
+        // Load friend requests
         loadFriendRequests();
 
-        return rootView;
+        return binding.getRoot(); // Return the root view
     }
 
-    // Método para verificar si un correo electrónico es válido
+    // Method to validate email format
     private boolean isValidEmail(CharSequence target) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-    // Método para verificar si el correo del receptor existe en la colección "users"
+    // Method to check if user exists
     private void checkUserExists(String email) {
+        // Check if user exists in the database
         db.collection("users")
                 .whereEqualTo("email", email)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (task.getResult().isEmpty()) {
-                            // Si no se encuentra el correo en la colección "users", mostrar un mensaje de error
                             Toast.makeText(getActivity(), "El usuario con el correo electrónico especificado no existe", Toast.LENGTH_SHORT).show();
                         } else {
-                            checkPendingRequest(email);
+                            checkPendingRequest(email); // Check if there's a pending request with this user
                         }
                     } else {
-                        Toast.makeText(getActivity(), "Error al verificar el correo del receptor: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Error al verificar el correo del receptor: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // Método para verificar si ya existe una solicitud de amistad pendiente entre ambos usuarios
+    // Method to check if there's a pending friend request
     private void checkPendingRequest(String email) {
+        // Check if there's already a pending request sent to this user
         db.collection("friends")
-                .whereEqualTo("friend_1", mAuth.getCurrentUser().getEmail())
+                .whereEqualTo("friend_1", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail())
                 .whereEqualTo("friend_2", email)
                 .get()
                 .addOnCompleteListener(requestTask -> {
                     if (requestTask.isSuccessful()) {
                         if (!requestTask.getResult().isEmpty()) {
-                            // Si ya existe una solicitud pendiente entre ambos usuarios, mostrar un mensaje de error
                             Toast.makeText(getActivity(), "Ya has enviado una solicitud de amistad a este usuario", Toast.LENGTH_SHORT).show();
                         } else {
-                            checkFriendshipStatus(email);
+                            checkFriendshipStatus(email); // Check friendship status with this user
                         }
                     } else {
-                        Toast.makeText(getActivity(), "Error al verificar la solicitud de amistad pendiente: " + requestTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Error al verificar la solicitud de amistad pendiente: " + Objects.requireNonNull(requestTask.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // Método para verificar si ya son amigos
+    // Method to check friendship status
     private void checkFriendshipStatus(String email) {
-        String currentUserEmail = mAuth.getCurrentUser().getEmail();
+        String currentUserEmail = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
 
-        // Verificar si el usuario actual está como remitente y el otro como receptor
+        // Check if the user is already a friend or if there's a pending friend request in reverse direction
         db.collection("friends")
                 .whereEqualTo("friend_1", currentUserEmail)
                 .whereEqualTo("friend_2", email)
@@ -119,10 +110,8 @@ public class ListPendingFragment extends Fragment {
                 .addOnCompleteListener(friendTask -> {
                     if (friendTask.isSuccessful()) {
                         if (!friendTask.getResult().isEmpty()) {
-                            // Si ya son amigos, mostrar un mensaje de error
                             Toast.makeText(getActivity(), "Ya eres amigo de este usuario", Toast.LENGTH_SHORT).show();
                         } else {
-                            // Verificar si el usuario actual está como receptor y el otro como remitente
                             db.collection("friends")
                                     .whereEqualTo("friend1", email)
                                     .whereEqualTo("friend2", currentUserEmail)
@@ -130,131 +119,111 @@ public class ListPendingFragment extends Fragment {
                                     .addOnCompleteListener(reverseFriendTask -> {
                                         if (reverseFriendTask.isSuccessful()) {
                                             if (!reverseFriendTask.getResult().isEmpty()) {
-                                                // Si ya son amigos, mostrar un mensaje de error
                                                 Toast.makeText(getActivity(), "Ya eres amigo de este usuario", Toast.LENGTH_SHORT).show();
                                             } else {
-                                                // Crear la solicitud de amistad si ninguna de las verificaciones anteriores tiene éxito
-                                                createFriendRequest(email);
+                                                createFriendRequest(email); // Create friend request
                                             }
                                         } else {
-                                            Toast.makeText(getActivity(), "Error al verificar el estado de la amistad: " + reverseFriendTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Error al verificar el estado de la amistad: " + Objects.requireNonNull(reverseFriendTask.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                         }
                     } else {
-                        Toast.makeText(getActivity(), "Error al verificar el estado de la amistad: " + friendTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Error al verificar el estado de la amistad: " + Objects.requireNonNull(friendTask.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-
-    // Método para crear la solicitud de amistad
+    // Method to create friend request
     private void createFriendRequest(String email) {
         Map<String, Object> friendRequest = new HashMap<>();
-        friendRequest.put("sender_email", mAuth.getCurrentUser().getEmail()); // Aquí pasamos el correo del remitente
+        friendRequest.put("sender_email", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
         friendRequest.put("receiver_email", email);
-        friendRequest.put("status", "pending"); // Indica que la solicitud está pendiente
+        friendRequest.put("status", "pending");
 
-        // Almacenar la solicitud de amistad en la base de datos
+        // Add friend request to Firestore
         db.collection("friend_requests")
                 .add(friendRequest)
                 .addOnSuccessListener(documentReference -> Toast.makeText(getActivity(), "Solicitud de amistad enviada a: " + email, Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(getActivity(), "Error al enviar la solicitud de amistad: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // Método para enviar la solicitud de amistad
+    // Method to send friend request
     private void sendFriendRequest(String email) {
-
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().isAnonymous()) {
-            // El usuario ha iniciado sesión de forma anónima, mostrar un mensaje de error
+            // Prevent sending friend requests while logged in as anonymous user
             Toast.makeText(getActivity(), "No puedes enviar solicitudes de amistad mientras estás registrado como usuario anónimo", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if(mAuth.getCurrentUser() != null && Objects.equals(mAuth.getCurrentUser().getEmail(), email)){
+            // Prevent sending friend requests to oneself
             Toast.makeText(getActivity(), "No puedes enviarte solicitudes de amistad a ti mismo", Toast.LENGTH_SHORT).show();
             return;
         }
-        checkUserExists(email);
+        checkUserExists(email); // Check if the user exists and proceed accordingly
     }
 
-    // Método para cargar las solicitudes de amistad recibidas
+    // Method to load friend requests
     private void loadFriendRequests() {
         db.collection("friend_requests")
-                .whereEqualTo("receiver_email", mAuth.getCurrentUser().getEmail())
+                .whereEqualTo("receiver_email", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        LinearLayout container = rootView.findViewById(R.id.containerFriendRequests);
-                        container.removeAllViews();
+                        LinearLayout container = binding.containerFriendRequests;
+                        container.removeAllViews(); // Remove all views from the container
 
+                        // Iterate through each document in the result
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String senderEmail = document.getString("sender_email");
                             String status = document.getString("status");
 
+                            assert status != null;
                             if (status.equals("pending")) {
-                                // Inflar el diseño de la solicitud de amistad
-                                View requestView = LayoutInflater.from(getActivity()).inflate(R.layout.friend_request_item, container, false);
+                                // Set sender's email in text view
+                                friends_binding.textViewSenderEmail.setText(senderEmail);
 
-                                // Obtener referencias a las vistas dentro del diseño inflado
-                                TextView textViewSenderEmail = requestView.findViewById(R.id.textViewSenderEmail);
-                                Button buttonAccept = requestView.findViewById(R.id.buttonAccept);
-                                Button buttonReject = requestView.findViewById(R.id.buttonReject);
+                                // Set click listeners for accept and reject buttons
+                                friends_binding.buttonAccept.setOnClickListener(v -> document.getReference().update("status", "accepted")
+                                        .addOnSuccessListener(aVoid -> {
+                                            // Add friends to Firestore when request is accepted
+                                            Map<String, Object> friendsData = new HashMap<>();
+                                            friendsData.put("friend_1", mAuth.getCurrentUser().getEmail());
+                                            friendsData.put("friend_2", senderEmail);
+                                            db.collection("friends").add(friendsData);
 
-                                // Establecer el correo electrónico del remitente
-                                textViewSenderEmail.setText(senderEmail);
-
-                                // Establecer OnClickListener para el botón Aceptar
-                                buttonAccept.setOnClickListener(v -> {
-                                    document.getReference().update("status", "accepted")
-                                            .addOnSuccessListener(aVoid -> {
-                                                // Agregar una nueva entrada en la colección "friends" con los correos electrónicos de los usuarios
-                                                Map<String, Object> friendsData = new HashMap<>();
-                                                friendsData.put("friend_1", mAuth.getCurrentUser().getEmail());
-                                                friendsData.put("friend_2", senderEmail);
-                                                db.collection("friends").add(friendsData);
-
-                                                container.removeView(requestView);
-                                                // Mostrar Snackbar con opción "Undo" al aceptar la solicitud
-                                                Snackbar snackbar = Snackbar.make(rootView, "Solicitud de amistad aceptada", Snackbar.LENGTH_LONG);
-                                                snackbar.setAction("Undo", v1 -> {
-                                                    // Si el usuario hace clic en "Undo", revertir la acción actualizando el estado de la solicitud a "pending"
-                                                    document.getReference().update("status", "pending");
-                                                    container.addView(requestView); // Añadir de nuevo la vista de la solicitud
-                                                });
-                                                snackbar.show();
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Toast.makeText(getActivity(), "Error al aceptar la solicitud de amistad", Toast.LENGTH_SHORT).show();
+                                            container.removeView(friends_binding.getRoot());
+                                            // Show snack-bar with option to undo
+                                            Snackbar snackbar = Snackbar.make(binding.getRoot(), "Solicitud de amistad aceptada", Snackbar.LENGTH_LONG);
+                                            snackbar.setAction("Undo", v1 -> {
+                                                document.getReference().update("status", "pending");
+                                                container.addView(friends_binding.getRoot()); // Add back the view of the request
                                             });
-                                });
+                                            snackbar.show();
+                                        })
+                                        .addOnFailureListener(e -> Toast.makeText(getActivity(), "Error al aceptar la solicitud de amistad", Toast.LENGTH_SHORT).show()));
 
-                                // Establecer OnClickListener para el botón Rechazar
-                                buttonReject.setOnClickListener(v -> {
-                                    document.getReference().update("status", "rejected")
-                                            .addOnSuccessListener(aVoid -> {
-                                                container.removeView(requestView);
-                                                // Mostrar Snackbar con opción "Undo" al rechazar la solicitud
-                                                Snackbar snackbar = Snackbar.make(rootView, "Solicitud de amistad rechazada", Snackbar.LENGTH_LONG);
-                                                snackbar.setAction("Undo", v1 -> {
-                                                    // Si el usuario hace clic en "Undo", revertir la acción actualizando el estado de la solicitud a "pending"
-                                                    document.getReference().update("status", "pending");
-                                                    container.addView(requestView); // Añadir de nuevo la vista de la solicitud
-                                                });
-                                                snackbar.show();
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Toast.makeText(getActivity(), "Error al rechazar la solicitud de amistad", Toast.LENGTH_SHORT).show();
+                                // Set click listener for reject button
+                                friends_binding.buttonReject.setOnClickListener(v -> document.getReference().update("status", "rejected")
+                                        .addOnSuccessListener(aVoid -> {
+                                            container.removeView(friends_binding.getRoot());
+                                            // Show snack-bar with option to undo
+                                            Snackbar snackbar = Snackbar.make(binding.getRoot(), "Solicitud de amistad rechazada", Snackbar.LENGTH_LONG);
+                                            snackbar.setAction("Undo", v1 -> {
+                                                document.getReference().update("status", "pending");
+                                                container.addView(friends_binding.getRoot()); // Add back the view of the request
                                             });
-                                });
+                                            snackbar.show();
+                                        })
+                                        .addOnFailureListener(e -> Toast.makeText(getActivity(), "Error al rechazar la solicitud de amistad", Toast.LENGTH_SHORT).show()));
 
-
-                                // Agregar la vista de la solicitud de amistad al contenedor
-                                container.addView(requestView);
+                                container.addView(friends_binding.getRoot()); // Add the view of the request to the container
                             }
                         }
                     } else {
-                        Toast.makeText(getActivity(), "Error al cargar las solicitudes de amistad: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        // Show error message if loading friend requests fails
+                        Toast.makeText(getActivity(), "Error al cargar las solicitudes de amistad: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

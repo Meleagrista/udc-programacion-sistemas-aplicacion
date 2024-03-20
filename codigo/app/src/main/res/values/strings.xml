@@ -16,6 +16,7 @@
 
     <!-- Strings genericos -->
     <string name="aceptar">Aceptar</string>
+    <string name="editar">Editar</string>
     <string name="rechazar">Rechazar</string>
     <string name="atras">Atrás</string>
     <string name="opciones">OPCIONES</string>

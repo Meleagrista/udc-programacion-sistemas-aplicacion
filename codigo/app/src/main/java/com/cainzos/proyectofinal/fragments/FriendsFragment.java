@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cainzos.proyectofinal.R;
+import com.cainzos.proyectofinal.databinding.FragmentFriendsBinding;
 import com.cainzos.proyectofinal.fragments_friends.ListFriendsFragment;
 import com.cainzos.proyectofinal.fragments_friends.ListPendingFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,15 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FriendsFragment extends Fragment {
 
-    private View rootView;
-
-    /*Asignacion de ids*/
-    //Botones
-    private Button friendsButton, pendingButton;
-    //TextViews
-    private TextView idText;
-
-    /*Variables firebase*/
+    private FragmentFriendsBinding binding;
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
 
@@ -37,31 +29,26 @@ public class FriendsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState ) {
 
-        //FindViews
-        friendsButton = rootView.findViewById(R.id.friendsButton);
-        pendingButton = rootView.findViewById(R.id.pendingList);
-        idText = rootView.findViewById(R.id.idUser);
+        super.onCreate(savedInstanceState);
+        binding = FragmentFriendsBinding.inflate(getLayoutInflater());
 
-        //Obtenemos las intancias de Firebase
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
-        //Cargamos la Id del usuario para mostrarla por pantalla
         loadUserId();
 
-        friendsButton.setOnClickListener(v -> loadFragment(new ListFriendsFragment()));
+        binding.friendsButton.setOnClickListener(v -> loadFragment(new ListFriendsFragment()));
+        binding.pendingList.setOnClickListener(v -> loadFragment(new ListPendingFragment()));
 
-        pendingButton.setOnClickListener(v -> loadFragment(new ListPendingFragment()));
-
-        return rootView;
+        return binding.getRoot();
     }
 
-    /*---Funcion para cargar el ID del usuario en el TextView---*/
+    /*--- Función para cargar el ID del usuario en el TextView ---*/
     private void loadUserId() {
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && !mAuth.getCurrentUser().isAnonymous()) {
             String userId = currentUser.getUid();
@@ -72,17 +59,19 @@ public class FriendsFragment extends Fragment {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 String userID = document.getString("id");
-                                idText.setText(userID);
+                                binding.idUser.setText(userID);
                             }
                         }
                     });
-        }else{
-            idText.setText(R.string.login_toget_id_msg); //En el caso de ser usuario anonimo se mostrara esto
+        } else {
+            //En el caso de ser usuario anónimo se mostrara esto
+            binding.idUser.setText(R.string.login_toget_id_msg);
         }
     }
 
-    /*---Funcion para gestionar los fragmentos---*/
+    /*---Función para gestionar los fragmentos---*/
     private void loadFragment(Fragment fragment) {
+
         // Cargar el fragmento dado en el contenedor del fragmento
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
