@@ -6,7 +6,7 @@ El juego consta de una serie de desafíos, tanto individuales como en grupo, que
 
 Mientras, la aplicación será la plataforma que proporcionará la interfaz y las funciones necesarias para jugar. Esto incluirá características como rankings entre amigos, la capacidad de jugar en línea con varios jugadores y algunas opciones para personalizar la interfaz.
 
-# Prototipo de la interfaz
+# Prototipo de la aplicación
 ## Lanzador del juego
 ![Prototipo de la primeras pantallas](/prototyping-files/launcher-02-03.jpg)
 
@@ -21,3 +21,26 @@ El modo de juego principal consiste en un desafío de pruebas y preguntas con di
 ## Apariencia del juego
 > [!WARNING]
 > Todavía por decidir.
+
+# Registro de desarrollo
+## Snapshot 20/03/2024
+### Inicio de sesión
+![Pantalla de inicio de sesión](/design-files/screenshots/inicio-2024-03-20.png)
+
+Permite registrarte e iniciar sesión, actualmente estamos usando una base de datos manejada por FireBase.
+
+### Menú principal
+![Pantalla de principal](/design-files/screenshots/menu-2024-03-20.png)
+
+Tiene un menu de navgeación en la barra inferior que permite ir al menú de amistades o a la tienda (aún no está implementada). En la parte superior, en el icono de mas opciones se podría cerrar la sesión o ir a la configuración (aún no está implementada).
+En el medio tenemos el menú deslizable donde hay tres opciones, unicamente una esta operativa.
+
+### Amigos
+![Pantalla de amistades](/design-files/screenshots/amigos-2024-03-20.png)
+
+Permite aceptar y enviar solicitudes y ver tus amigos añadidos.
+
+### Creación de sala
+![Pantalla de creación de sala](/design-files/screenshots/sala-2024-03-20.png)
+
+Un pantalla temporal, falta un paso intermedio en la navegación, que sería la creación de una sala multijugador.
