@@ -89,10 +89,9 @@ public class ListPendingFragment extends Fragment {
 
     // Método para verificar si ya existe una solicitud de amistad pendiente entre ambos usuarios
     private void checkPendingRequest(String email) {
-        db.collection("friend_requests")
-                .whereEqualTo("sender_email", mAuth.getCurrentUser().getEmail())
-                .whereEqualTo("receiver_email", email)
-                .whereEqualTo("status", "pending")
+        db.collection("friends")
+                .whereEqualTo("friend_1", mAuth.getCurrentUser().getEmail())
+                .whereEqualTo("friend_2", email)
                 .get()
                 .addOnCompleteListener(requestTask -> {
                     if (requestTask.isSuccessful()) {
@@ -113,10 +112,9 @@ public class ListPendingFragment extends Fragment {
         String currentUserEmail = mAuth.getCurrentUser().getEmail();
 
         // Verificar si el usuario actual está como remitente y el otro como receptor
-        db.collection("friend_requests")
-                .whereEqualTo("sender_email", currentUserEmail)
-                .whereEqualTo("receiver_email", email)
-                .whereEqualTo("status", "accepted")
+        db.collection("friends")
+                .whereEqualTo("friend_1", currentUserEmail)
+                .whereEqualTo("friend_2", email)
                 .get()
                 .addOnCompleteListener(friendTask -> {
                     if (friendTask.isSuccessful()) {
@@ -125,10 +123,9 @@ public class ListPendingFragment extends Fragment {
                             Toast.makeText(getActivity(), "Ya eres amigo de este usuario", Toast.LENGTH_SHORT).show();
                         } else {
                             // Verificar si el usuario actual está como receptor y el otro como remitente
-                            db.collection("friend_requests")
-                                    .whereEqualTo("sender_email", email)
-                                    .whereEqualTo("receiver_email", currentUserEmail)
-                                    .whereEqualTo("status", "accepted")
+                            db.collection("friends")
+                                    .whereEqualTo("friend1", email)
+                                    .whereEqualTo("friend2", currentUserEmail)
                                     .get()
                                     .addOnCompleteListener(reverseFriendTask -> {
                                         if (reverseFriendTask.isSuccessful()) {
@@ -211,6 +208,12 @@ public class ListPendingFragment extends Fragment {
                                 buttonAccept.setOnClickListener(v -> {
                                     document.getReference().update("status", "accepted")
                                             .addOnSuccessListener(aVoid -> {
+                                                // Agregar una nueva entrada en la colección "friends" con los correos electrónicos de los usuarios
+                                                Map<String, Object> friendsData = new HashMap<>();
+                                                friendsData.put("friend_1", mAuth.getCurrentUser().getEmail());
+                                                friendsData.put("friend_2", senderEmail);
+                                                db.collection("friends").add(friendsData);
+
                                                 container.removeView(requestView);
                                                 // Mostrar Snackbar con opción "Undo" al aceptar la solicitud
                                                 Snackbar snackbar = Snackbar.make(rootView, "Solicitud de amistad aceptada", Snackbar.LENGTH_LONG);

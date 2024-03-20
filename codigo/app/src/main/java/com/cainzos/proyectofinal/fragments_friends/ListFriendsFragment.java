@@ -20,14 +20,19 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ListFriendsFragment extends Fragment {
 
     private EditText editTextName;
-    private Button buttonEditName;
+    private Button buttonEditName, buttonDelete;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private LinearLayout containerFriends;
     private View rootView;
+    private TextView textView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,6 +47,7 @@ public class ListFriendsFragment extends Fragment {
         editTextName = rootView.findViewById(R.id.editTextName);
         buttonEditName = rootView.findViewById(R.id.editUserName);
         containerFriends = rootView.findViewById(R.id.containerFriends);
+
         editTextName.setEnabled(false);
 
         // Obtener el nombre de usuario de Firestore y establecerlo en el EditText
@@ -70,43 +76,48 @@ public class ListFriendsFragment extends Fragment {
         return rootView;
     }
 
-    // Método para cargar los amigos de un usuario
     private void loadFriends() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null && !mAuth.getCurrentUser().isAnonymous()) {
             String currentUserEmail = currentUser.getEmail();
 
-            db.collection("friend_requests")
-                    .whereEqualTo("status", "accepted")
-                    .whereEqualTo("sender_email", currentUserEmail)
+            db.collection("friends")
+                    .whereEqualTo("friend_1", currentUserEmail)
                     .get()
-                    .addOnSuccessListener(senderQueryDocumentSnapshots -> {
-                        for (QueryDocumentSnapshot senderDocumentSnapshot : senderQueryDocumentSnapshots) {
-                            String receiverEmail = senderDocumentSnapshot.getString("receiver_email");
-                            addFriendToLayout(receiverEmail);
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            String friend2 = document.getString("friend_2");
+
+                            // Asegurarse de que el usuario actual no sea amigo consigo mismo
+                            if (!friend2.equals(currentUserEmail)) {
+                                addFriendToLayout(friend2);
+                            }
                         }
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(getActivity(), "Error al cargar los amigos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
 
-            db.collection("friend_requests")
-                    .whereEqualTo("status", "accepted")
-                    .whereEqualTo("receiver_email", currentUserEmail)
+            db.collection("friends")
+                    .whereEqualTo("friend_2", currentUserEmail)
                     .get()
-                    .addOnSuccessListener(receiverQueryDocumentSnapshots -> {
-                        for (QueryDocumentSnapshot receiverDocumentSnapshot : receiverQueryDocumentSnapshots) {
-                            String senderEmail = receiverDocumentSnapshot.getString("sender_email");
-                            addFriendToLayout(senderEmail);
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            String friend1 = document.getString("friend_1");
 
+                            // Asegurarse de que el usuario actual no sea amigo consigo mismo
+                            if (!friend1.equals(currentUserEmail)) {
+                                addFriendToLayout(friend1);
+                            }
                         }
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(getActivity(), "Error al cargar los amigos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
-        } else if(mAuth.getCurrentUser().isAnonymous()) {
-            Toast.makeText(getActivity(), "Inicia sesion para poder tener amigos", Toast.LENGTH_SHORT).show();
-        }else {
+
+        } else if (mAuth.getCurrentUser().isAnonymous()) {
+            Toast.makeText(getActivity(), "Inicia sesión para poder tener amigos", Toast.LENGTH_SHORT).show();
+        } else {
             Toast.makeText(getActivity(), "Usuario actual nulo", Toast.LENGTH_SHORT).show();
         }
     }
@@ -119,9 +130,52 @@ public class ListFriendsFragment extends Fragment {
                 if (userName == null || userName.isEmpty()) {
                     userName = "Anonymous123";
                 }
-                TextView textView = new TextView(getActivity());
+
+                // Inflar el diseño del amigo
+                View friendView = getLayoutInflater().inflate(R.layout.friend_item, null);
+
+                // Obtener referencias de vistas dentro del diseño inflado
+                textView = friendView.findViewById(R.id.textViewFriendName);
+                buttonDelete = friendView.findViewById(R.id.buttonDelete);
+
+                //Obtenemos el correo del usuario
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                assert currentUser != null;
+                String currentUserEmail = currentUser.getEmail();
+
+                buttonDelete.setOnClickListener(view -> {
+                    // Crear lista con los correos electrónicos de ambos usuarios
+                    List<String> userEmails = new ArrayList<>();
+                    userEmails.add(currentUserEmail);
+                    userEmails.add(email);
+
+                    db.collection("friends")
+                            .whereIn("friend_1", userEmails)
+                            .whereIn("friend_2", userEmails)
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                    document.getReference().delete()
+                                            .addOnSuccessListener(aVoid -> {
+                                                // Remove friend from layout
+                                                containerFriends.removeView(friendView);
+                                                Toast.makeText(getActivity(), "Amigo eliminado", Toast.LENGTH_SHORT).show();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(getActivity(), "Error al eliminar amigo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getActivity(), "Error al cargar los amigos: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                });
+
+                // Configurar los datos
                 textView.setText(userName);
-                containerFriends.addView(textView);
+
+                // Agregar amigo al contenedor
+                containerFriends.addView(friendView);
             }
         });
     }

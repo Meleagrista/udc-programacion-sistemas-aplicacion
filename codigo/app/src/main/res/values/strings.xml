@@ -28,4 +28,8 @@
     <string name="opciones">OPCIONES</string>
     <string name="ask_numplaters">Indica el número de jugadores</string>
     <string name="choose_dif_text">Selecciona la dificultad</string>
+    <string name="id_text">TU ID: </string>
+    <string name="show_id">id tuya</string>
+    <string name="friends_list_button">Amigos</string>
+    <string name="requests_friends_button">Solicitudes de Amistad</string>
 </resources>

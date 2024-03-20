@@ -9,7 +9,7 @@
         android:title="@string/gamemode_fragment"
         android:icon="@drawable/logo_app"/>
     <item
-        android:id="@+id/shop_item"
+        android:id="@+id/room_item"
         android:title="@string/shop_fragment"
         android:icon="@drawable/perfil_tienda" />
 </menu>

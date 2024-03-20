@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/fragment3"
-        android:name="com.cainzos.proyectofinal.fragments.ShopFragment"
+        android:name="com.cainzos.proyectofinal.fragments.RoomFragment"
         android:label="Fragment 3"
         tools:layout="@layout/activity_main" />
 

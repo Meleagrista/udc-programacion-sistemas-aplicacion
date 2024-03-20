@@ -1,7 +1,6 @@
 package com.cainzos.proyectofinal;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,17 +9,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.cainzos.proyectofinal.databinding.ActivityGamemodeBinding;
 import com.cainzos.proyectofinal.fragments.FriendsFragment;
 import com.cainzos.proyectofinal.fragments.GamemodeFragment;
-import com.cainzos.proyectofinal.fragments.ShopFragment;
+import com.cainzos.proyectofinal.fragments.RoomFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class GamemodeActivity extends AppCompatActivity {
 
     /*---Bindings---*/
     private ActivityGamemodeBinding binding;
+
+    private FirebaseAuth mAuth;
 
     /*---Variable para gestionar los distintos fragmentos que se pueden mostrar---*/
     private FragmentManager fragmentManager;
@@ -30,6 +33,9 @@ public class GamemodeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityGamemodeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Obtener instancia FirebaseAuth
+        mAuth = FirebaseAuth.getInstance();
 
         fragmentManager = getSupportFragmentManager();
 
@@ -47,8 +53,12 @@ public class GamemodeActivity extends AppCompatActivity {
                 replaceFragment(new FriendsFragment(), "friends");
             }else if(id == R.id.gamemode_item){ //Caso en el que se pulse el item de gamemode
                 replaceFragment(new GamemodeFragment(), "gamemode");
-            }else if(id == R.id.shop_item){ //Caso en el que se pulse el item de shop
-                replaceFragment(new ShopFragment(), "shop");
+            }else if(id == R.id.room_item){ //Caso en el que se pulse el item de shop
+                if(mAuth.getCurrentUser().isAnonymous()){
+                    Toast.makeText(this, "Inicia sesion para poder unirte a salas", Toast.LENGTH_SHORT).show();
+                }else{
+                    replaceFragment(new RoomFragment(), "shop");
+                }
             }
             return true;
         });
