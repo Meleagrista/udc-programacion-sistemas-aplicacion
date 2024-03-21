@@ -110,6 +110,7 @@ public class ListFriendsFragment extends Fragment {
         db.collection("users").whereEqualTo("email", email).get().addOnSuccessListener(receiverQueryDocumentSnapshots->{
             for (QueryDocumentSnapshot receiverDocumentSnapshot : receiverQueryDocumentSnapshots){
                 String userName = receiverDocumentSnapshot.getString("username");
+                String tag = receiverDocumentSnapshot.getString("tag");
                 if (userName == null || userName.isEmpty()) { userName = "Anonymous123"; }
 
                 FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -142,7 +143,7 @@ public class ListFriendsFragment extends Fragment {
                 });
 
                 // Setting friend's username
-                friends_binding.textViewFriendName.setText(userName);
+                friends_binding.textViewFriendName.setText(userName + " " + tag);
 
                 // Adding friend item to the layout
                 binding.containerFriends.addView(friends_binding.getRoot());

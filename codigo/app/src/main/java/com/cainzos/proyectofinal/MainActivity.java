@@ -18,6 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -82,9 +84,7 @@ public class MainActivity extends AppCompatActivity{
         });
 
         /*---Logica cuando se pulsa el boton de entrar como anonimo---*/
-        anonymousButton.setOnClickListener(view -> {
-            loginAnonymous();
-        });
+        anonymousButton.setOnClickListener(view -> loginAnonymous());
 
         /*---Comprobar sesión al abrir la aplicación---*/
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -135,17 +135,28 @@ public class MainActivity extends AppCompatActivity{
     private void registerUser(String email, String password){
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.d("_TAG", "Tarea realiazda con exito");
+                Log.d("_TAG", "Tarea realizada con éxito");
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
                     //Obtenemos el Id del usuario
                     String id = user.getUid();
+
+                    //Creamos un nombre de usuario generico
+                    String userName = "Non user";
+
+                    // Obtener los primeros cinco caracteres del correo electrónico
+                    String emailPrefix = getEmailPrefix(email);
+
+                    // Crear el tag con "#" y los primeros cinco caracteres del correo electrónico
+                    String tag = "#" + emailPrefix;
+
                     //Creamos un map con todos los parametros del usuario para poder almacenarlo
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", id);
                     map.put("email", email);
                     map.put("password", password);
-                    map.put("username", "");
+                    map.put("username", userName);
+                    map.put("tag", tag);
 
                     //Registra al usuario en la base de datos y llama a la actividad de Gamemode
                     mFirestore.collection(getString(R.string.collection_path_users)).document(id).set(map).addOnSuccessListener(unused -> {
@@ -157,10 +168,28 @@ public class MainActivity extends AppCompatActivity{
                     Toast.makeText(MainActivity.this, R.string.error_usr_null, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(MainActivity.this, getString(R.string.error_creating_user) + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.error_creating_user) + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    // Método para obtener los primeros cinco caracteres del correo electrónico
+    private String getEmailPrefix(String email) {
+        String[] parts = email.split("@");
+        StringBuilder prefix = new StringBuilder(parts[0]);
+        if (prefix.length() < 5) {
+            // Si el prefijo tiene menos de cinco caracteres, completarlo con caracteres aleatorios
+            Random random = new Random();
+            while (prefix.length() < 5) {
+                char randomChar = (char) (random.nextInt(26) + 'a'); // Generar un carácter aleatorio
+                prefix.append(randomChar);
+            }
+        } else {
+            prefix = new StringBuilder(prefix.substring(0, 5)); // Tomar los primeros cinco caracteres
+        }
+        return prefix.toString();
+    }
+
 
     /*---Funcion para registrar a un usuario de forma anonima---*/
     private void loginAnonymous(){
