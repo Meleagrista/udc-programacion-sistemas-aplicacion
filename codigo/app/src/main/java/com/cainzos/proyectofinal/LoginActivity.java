@@ -1,7 +1,7 @@
 package com.cainzos.proyectofinal;
 
 import androidx.activity.result.ActivityResultLauncher;
-import com.cainzos.proyectofinal.databinding.ActivityMainBinding;
+import com.cainzos.proyectofinal.databinding.ActivityLoginBinding;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.cainzos.proyectofinal.recursos.UserDataManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity{
+public class LoginActivity extends AppCompatActivity{
 
     /*Variables firebase*/
     FirebaseFirestore mFirestore;
@@ -35,13 +36,11 @@ public class MainActivity extends AppCompatActivity{
     /*Variables intents*/
     private ActivityResultLauncher<Intent> myStartActivityForResult;
 
-    /*Bindings*/
-    private ActivityMainBinding binding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        /*Bindings*/
+        com.cainzos.proyectofinal.databinding.ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         /*---Gestion de firebase---*/
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity{
             String passwordAux = password.getText().toString().trim();
 
             if (emailAux.isEmpty() || passwordAux.isEmpty()) { //Comprobamos que el correo o la contraseña sean nulas
-                Toast.makeText(MainActivity.this, R.string.error_elemento_vacio_iniciosesion, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, R.string.error_elemento_vacio_iniciosesion, Toast.LENGTH_SHORT).show();
             }else{
                 registerUser(emailAux, passwordAux);
             }
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity{
             String passwordAux = password.getText().toString().trim();
 
             if(emailAux.isEmpty() || passwordAux.isEmpty() ){ //Comprobamos que el correo o la contraseña sean nulas
-                Toast.makeText(MainActivity.this, R.string.error_elemento_vacio_registro, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, R.string.error_elemento_vacio_registro, Toast.LENGTH_SHORT).show();
             }else{
                 loginUser(emailAux, passwordAux);
             }
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity{
 
     /*---Funcion que se encarga de dirigir directamente a la siguiente Actividad en caso de que ya hubiese una sesion guardada---*/
     private void redirectToGamemodeActivity() {
-        startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+        startActivity(new Intent(LoginActivity.this, MenuActivity.class));
         finish(); // Termina la actividad actual para evitar que el usuario regrese a ella usando el botón de retroceso
     }
 
@@ -106,7 +105,7 @@ public class MainActivity extends AppCompatActivity{
                 saveSessionInfo(); //Una vez iniciada la sesion se registran los datos de sesion para cuando vuelva a abrirse la app
                 redirectToGamemodeActivity();
             }else{
-                Toast.makeText(MainActivity.this, R.string.error_msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, R.string.error_msg, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -142,7 +141,7 @@ public class MainActivity extends AppCompatActivity{
                     String id = user.getUid();
 
                     //Creamos un nombre de usuario generico
-                    String userName = "Non user";
+                    String userName = "Non_user";
 
                     // Obtener los primeros cinco caracteres del correo electrónico
                     String emailPrefix = getEmailPrefix(email);
@@ -160,15 +159,17 @@ public class MainActivity extends AppCompatActivity{
 
                     //Registra al usuario en la base de datos y llama a la actividad de Gamemode
                     mFirestore.collection(getString(R.string.collection_path_users)).document(id).set(map).addOnSuccessListener(unused -> {
-                        startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+                        // Inicializar UserDataManager al registrarse
+                        UserDataManager.getInstance();
+                        startActivity(new Intent(LoginActivity.this, MenuActivity.class));
                         // Cierra la actividad actual después de iniciar la actividad GamemodeActivity
                         finish();
                     });
                 } else {
-                    Toast.makeText(MainActivity.this, R.string.error_usr_null, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.error_usr_null, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(MainActivity.this, getString(R.string.error_creating_user) + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.error_creating_user) + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -195,8 +196,8 @@ public class MainActivity extends AppCompatActivity{
     private void loginAnonymous(){
         mAuth.signInAnonymously().addOnCompleteListener(task -> {
            if(task.isSuccessful()){
-               startActivity(new Intent(MainActivity.this, GamemodeActivity.class));
+               startActivity(new Intent(LoginActivity.this, MenuActivity.class));
            }
-        }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, R.string.error_login_anonymous, Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, R.string.error_login_anonymous, Toast.LENGTH_SHORT).show());
     }
 }

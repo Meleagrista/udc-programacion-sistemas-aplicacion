@@ -1,7 +1,7 @@
 <resources>
     <!-- Strings app y MainActivity -->
-    <string name="app_name">RON</string>
-    <string name="nombre_app">RON</string>
+    <string name="app_name">RONAPP</string>
+    <string name="nombre_app">RONAPP</string>
     <string name="subtitulo_app">Tu app de fiestas favorita</string>
     <string name="correo_electronico">Correo Electronico</string>
     <string name="contrasena">Contraseña</string>
@@ -34,6 +34,8 @@
     <!-- Strings colecciones base de datos -->
     <string name="collection_path_users">users</string>
     <string name="collection_path_session">sessions</string>
+    <string name="collection_path_friends_request">friends_request</string>
+    <string name="collection_path_friends">friends</string>
 
     <!-- Strings dialogo modos de juego -->
     <string name="ask_numplayers">Indica el número de jugadores</string>
@@ -44,4 +46,5 @@
     <string name="show_id">id tuya</string>
     <string name="friends_list_button">Amigos</string>
     <string name="requests_friends_button">Solicitudes de Amistad</string>
+    <string name="anonymous">Anonymous</string>
 </resources>

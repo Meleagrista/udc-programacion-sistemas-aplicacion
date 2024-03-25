@@ -1,4 +1,4 @@
-package com.cainzos.proyectofinal.fragments;
+package com.cainzos.proyectofinal.fragments_menu;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,16 +13,14 @@ import com.cainzos.proyectofinal.R;
 import com.cainzos.proyectofinal.databinding.FragmentFriendsBinding;
 import com.cainzos.proyectofinal.fragments_friends.ListFriendsFragment;
 import com.cainzos.proyectofinal.fragments_friends.ListPendingFragment;
-import com.google.firebase.auth.FirebaseAuth;
+import com.cainzos.proyectofinal.recursos.UserDataManager;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FriendsFragment extends Fragment {
 
     private FragmentFriendsBinding binding;
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore mFirestore;
+    UserDataManager userDataManager;
+    FirebaseUser currentUser;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -34,9 +32,7 @@ public class FriendsFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         binding = FragmentFriendsBinding.inflate(getLayoutInflater());
-
-        mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance();
+        userDataManager = UserDataManager.getInstance();
 
         loadUserId();
 
@@ -48,26 +44,16 @@ public class FriendsFragment extends Fragment {
 
     /*--- Función para cargar el ID del usuario en el TextView ---*/
     private void loadUserId() {
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null && !mAuth.getCurrentUser().isAnonymous()) {
+        currentUser = userDataManager.getFirebaseUser();
+        if (currentUser != null && !userDataManager.getFirebaseUser().isAnonymous()) {
             String userId = currentUser.getUid();
-            mFirestore.collection(getString(R.string.collection_path_users)).document(userId)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                String userID = document.getString("id");
-                                binding.idUser.setText(userID);
-                            }
-                        }
-                    });
+            binding.idUser.setText(userId);
         } else {
-            //En el caso de ser usuario anónimo se mostrara esto
+            // En el caso de ser usuario anónimo, se mostrará este mensaje
             binding.idUser.setText(R.string.login_toget_id_msg);
         }
     }
+
 
     /*---Función para gestionar los fragmentos---*/
     private void loadFragment(Fragment fragment) {

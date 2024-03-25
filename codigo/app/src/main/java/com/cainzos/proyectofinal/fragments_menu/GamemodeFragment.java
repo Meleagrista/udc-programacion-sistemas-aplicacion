@@ -1,4 +1,4 @@
-package com.cainzos.proyectofinal.fragments;
+package com.cainzos.proyectofinal.fragments_menu;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.cainzos.proyectofinal.CustomAdapter;
+import com.cainzos.proyectofinal.recursos.CustomAdapter;
 import com.cainzos.proyectofinal.R;
 import com.cainzos.proyectofinal.databinding.FragmentGamemodeBinding;
 import com.google.android.material.tabs.TabLayout;

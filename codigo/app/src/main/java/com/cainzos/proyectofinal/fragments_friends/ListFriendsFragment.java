@@ -1,11 +1,11 @@
 package com.cainzos.proyectofinal.fragments_friends;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,20 +13,22 @@ import androidx.fragment.app.Fragment;
 import com.cainzos.proyectofinal.R;
 import com.cainzos.proyectofinal.databinding.ActivityListFriendsFragmentBinding;
 import com.cainzos.proyectofinal.databinding.FriendItemBinding;
-import com.google.firebase.auth.FirebaseAuth;
+import com.cainzos.proyectofinal.recursos.User;
+import com.cainzos.proyectofinal.recursos.UserDataManager;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.util.ArrayList;
 import java.util.List;
 
+
 public class ListFriendsFragment extends Fragment {
+
+    //Bindings
     private ActivityListFriendsFragmentBinding binding; // View binding for this fragment
     private FriendItemBinding friends_binding; // View binding for friends' items
-    private FirebaseFirestore db; // Firebase Firestore instance
-    private FirebaseAuth mAuth; // Firebase authentication instance
+    //Variables de gestion de datos
+    UserDataManager userDataManager;
+    //Variables de firebase
+    FirebaseUser currentUser;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -38,11 +40,9 @@ public class ListFriendsFragment extends Fragment {
         // Disabling name editing initially
         binding.editTextName.setEnabled(false);
 
-        // Initializing Firebase instances
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-
         // Setting current user's name in EditText
+        userDataManager = UserDataManager.getInstance();
+        currentUser = userDataManager.getFirebaseUser();
         setUserNameInEditText();
 
         // Handling click events on edit user name button
@@ -54,7 +54,7 @@ public class ListFriendsFragment extends Fragment {
             } else {
                 // Save new name and disable editing mode
                 String newName = binding.editTextName.getText().toString().trim();
-                updateUserName(newName);
+                userDataManager.updateUserName(newName, currentUser.getEmail(), getActivity());
                 binding.editTextName.setEnabled(false);
                 binding.editUserName.setText(R.string.editar);
             }
@@ -68,136 +68,57 @@ public class ListFriendsFragment extends Fragment {
 
     // Method to load user's friends list
     private void loadFriends() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null && !mAuth.getCurrentUser().isAnonymous()) {
-            String currentUserEmail = currentUser.getEmail();
-
-            // Fetching friends where current user is the first friend
-            db.collection("friends")
-                    .whereEqualTo("friend_1", currentUserEmail)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            String friend2 = document.getString("friend_2");
-                            assert friend2 != null;
-                            if (!friend2.equals(currentUserEmail)) { addFriendToLayout(friend2); }
-                        }
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(getActivity(), "Error al cargar los amigos: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
-            // Fetching friends where current user is the second friend
-            db.collection("friends")
-                    .whereEqualTo("friend_2", currentUserEmail)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            String friend1 = document.getString("friend_1");
-                            assert friend1 != null;
-                            if (!friend1.equals(currentUserEmail)) { addFriendToLayout(friend1); }
-                        }
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(getActivity(), "Error al cargar los amigos: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
-        } else if (mAuth.getCurrentUser().isAnonymous()) {
-            Toast.makeText(getActivity(), "Inicia sesión para poder tener amigos", Toast.LENGTH_SHORT).show();
+        List<User> friends = userDataManager.getFriends();
+        // Check if user data manager has finished loading user data
+        if (userDataManager.getUser() != null) {
+            // User data is loaded, load friends list
+            friends.forEach(this::addFriendToLayout);
         } else {
-            Toast.makeText(getActivity(), "Usuario actual nulo", Toast.LENGTH_SHORT).show();
+            // User data is not loaded yet, wait for callback
+            userDataManager.loadUserData(user -> {
+                // User data loaded, load friends list
+                friends.forEach(this::addFriendToLayout);
+            });
         }
     }
 
     // Method to add a friend to the layout
-    private void addFriendToLayout(String email) {
-        db.collection("users").whereEqualTo("email", email).get().addOnSuccessListener(receiverQueryDocumentSnapshots->{
-            for (QueryDocumentSnapshot receiverDocumentSnapshot : receiverQueryDocumentSnapshots){
-                String userName = receiverDocumentSnapshot.getString("username");
-                String tag = receiverDocumentSnapshot.getString("tag");
-                if (userName == null || userName.isEmpty()) { userName = "Anonymous123"; }
+    private void addFriendToLayout(User friend) {
+        // Inflate friend item layout
+        View friendItemView = LayoutInflater.from(getContext()).inflate(R.layout.friend_item, binding.containerFriends, false);
+        // Get references to views in friend item layout
+        TextView textViewFriendName = friendItemView.findViewById(R.id.textViewFriendName);
+        Button buttonDelete = friendItemView.findViewById(R.id.buttonDelete);
 
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                assert currentUser != null;
-                String currentUserEmail = currentUser.getEmail();
+        // Set friend's information in views
+        String userName = friend.getUserName();
+        String tag = friend.getTag();
 
-                // Handling click event on delete friend button
-                friends_binding.buttonDelete.setOnClickListener(view -> {
-                    List<String> userEmails = new ArrayList<>();
-                    userEmails.add(currentUserEmail);
-                    userEmails.add(email);
+        if (userName == null || userName.isEmpty()) {
+            userName = "Anonymous123";
+        }
 
-                    // Deleting friendship from database
-                    db.collection("friends")
-                            .whereIn("friend_1", userEmails)
-                            .whereIn("friend_2", userEmails)
-                            .get()
-                            .addOnSuccessListener(queryDocumentSnapshots -> {
-                                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                    document.getReference().delete()
-                                            .addOnSuccessListener(aVoid -> {
-                                                // Remove friend from layout
-                                                binding.containerFriends.removeView(friends_binding.getRoot());
-                                                Toast.makeText(getActivity(), "Amigo eliminado", Toast.LENGTH_SHORT).show();
-                                            })
-                                            .addOnFailureListener(e -> Toast.makeText(getActivity(), "Error al eliminar amigo: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                                }
-                            })
-                            .addOnFailureListener(e -> Toast.makeText(getActivity(), "Error al cargar los amigos: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                });
+        // Set friend's name in TextView
+        String text = userName + " " + tag;
+        textViewFriendName.setText(text);
 
-                // Setting friend's username
-                friends_binding.textViewFriendName.setText(userName + " " + tag);
-
-                // Adding friend item to the layout
-                binding.containerFriends.addView(friends_binding.getRoot());
-            }
+        // Handle click event on delete friend button
+        buttonDelete.setOnClickListener(view -> {
+            // Remove friend view from layout
+            binding.containerFriends.removeView(friendItemView);
+            userDataManager.deleteFriend(friend);
         });
+
+        // Add friend view to friends container
+        binding.containerFriends.addView(friendItemView);
     }
 
     // Method to set current user's name in EditText
     private void setUserNameInEditText() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            String userId = currentUser.getUid();
-
-            DocumentReference userRef = db.collection("users").document(userId);
-
-            userRef.get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String username = documentSnapshot.getString("username");
-                            binding.editTextName.setText(username);
-                        } else {
-                            Log.d("TAG", "El documento del usuario no existe");
-                        }
-                    })
-                    .addOnFailureListener(e -> Log.e("TAG", "Error al obtener el nombre de usuario: " + e.getMessage()));
-        }
-    }
-
-    // Method to update user's name in Firestore
-    private void updateUserName(String newName) {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            String currentUserEmail = currentUser.getEmail();
-            db.collection("users")
-                    .whereEqualTo("email", currentUserEmail)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            // Update the username field with the new value
-                            documentSnapshot.getReference().update("username", newName)
-                                    .addOnSuccessListener(aVoid ->
-                                            // Show success message when username is updated
-                                            Toast.makeText(getActivity(), "Nombre de usuario actualizado correctamente", Toast.LENGTH_SHORT).show())
-                                    .addOnFailureListener(e ->
-                                            // Show error message if username update fails
-                                            Toast.makeText(getActivity(), "Error al actualizar el nombre de usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                        }
-                    })
-                    .addOnFailureListener(e ->
-                            // Show error message if user search in the database fails
-                            Toast.makeText(getActivity(), "Error al buscar el usuario en la base de datos: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            binding.editTextName.setText(currentUser.getEmail());
         } else {
-            // Show error message if current user is null
-            Toast.makeText(getActivity(), "Usuario actual nulo", Toast.LENGTH_SHORT).show();
+            binding.editTextName.setText(R.string.anonymous);
         }
     }
 }

@@ -11,19 +11,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.cainzos.proyectofinal.databinding.ActivityGamemodeBinding;
-import com.cainzos.proyectofinal.fragments.FriendsFragment;
-import com.cainzos.proyectofinal.fragments.GamemodeFragment;
-import com.cainzos.proyectofinal.fragments.RoomFragment;
+import com.cainzos.proyectofinal.databinding.ActivityMenuBinding;
+import com.cainzos.proyectofinal.fragments_menu.FriendsFragment;
+import com.cainzos.proyectofinal.fragments_menu.GamemodeFragment;
+import com.cainzos.proyectofinal.fragments_menu.RoomFragment;
+import com.cainzos.proyectofinal.recursos.UserDataManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseUser;
 
-public class GamemodeActivity extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity {
 
     /*---Bindings---*/
-    private ActivityGamemodeBinding binding;
-
-    private FirebaseAuth mAuth;
+    private ActivityMenuBinding binding;
+    FirebaseUser currentUser;
+    private UserDataManager userDataManager;
 
     /*---Variable para gestionar los distintos fragmentos que se pueden mostrar---*/
     private FragmentManager fragmentManager;
@@ -31,11 +32,11 @@ public class GamemodeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityGamemodeBinding.inflate(getLayoutInflater());
+        binding = ActivityMenuBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Obtener instancia FirebaseAuth
-        mAuth = FirebaseAuth.getInstance();
+        userDataManager = UserDataManager.getInstance();
+        currentUser = userDataManager.getFirebaseUser();
 
         fragmentManager = getSupportFragmentManager();
 
@@ -54,7 +55,7 @@ public class GamemodeActivity extends AppCompatActivity {
             }else if(id == R.id.gamemode_item){ //Caso en el que se pulse el item de gamemode
                 replaceFragment(new GamemodeFragment(), "gamemode");
             }else if(id == R.id.room_item){ //Caso en el que se pulse el item de shop
-                if(mAuth.getCurrentUser().isAnonymous()){
+                if(currentUser.isAnonymous()){
                     Toast.makeText(this, "Inicia sesion para poder unirte a salas", Toast.LENGTH_SHORT).show();
                 }else{
                     replaceFragment(new RoomFragment(), "shop");
@@ -110,8 +111,9 @@ public class GamemodeActivity extends AppCompatActivity {
 
     /*---Cerrar sesion en firebase---*/
     private void logout() {
+        UserDataManager.clearInstance();
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 }

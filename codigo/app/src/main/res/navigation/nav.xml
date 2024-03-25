@@ -7,20 +7,20 @@
 
     <fragment
         android:id="@+id/fragment1"
-        android:name="com.cainzos.proyectofinal.fragments.FriendsFragment"
+        android:name="com.cainzos.proyectofinal.fragments_menu.FriendsFragment"
         android:label="Fragment 1"
-        tools:layout="@layout/activity_main" />
+        tools:layout="@layout/activity_login" />
 
     <fragment
         android:id="@+id/fragment2"
-        android:name="com.cainzos.proyectofinal.fragments.GamemodeFragment"
+        android:name="com.cainzos.proyectofinal.fragments_menu.GamemodeFragment"
         android:label="Fragment 2"
-        tools:layout="@layout/activity_gamemode" />
+        tools:layout="@layout/activity_menu" />
 
     <fragment
         android:id="@+id/fragment3"
-        android:name="com.cainzos.proyectofinal.fragments.RoomFragment"
+        android:name="com.cainzos.proyectofinal.fragments_menu.RoomFragment"
         android:label="Fragment 3"
-        tools:layout="@layout/activity_main" />
+        tools:layout="@layout/activity_login" />
 
 </navigation>
