@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/white"
-            android:hint="Nombre de usuario de tu amigo" />
+            android:hint="@string/hint_text_request"
+            android:textColorHint="@color/white"/>
 
         <!-- Botón para enviar solicitud -->
         <Button
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/boton_redondo"
             android:textColor="@color/white"
-            android:text="Enviar solicitud" />
+            android:text="@string/send_request" />
 
     </LinearLayout>
 

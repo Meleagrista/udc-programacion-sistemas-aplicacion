@@ -33,13 +33,15 @@ public class UserDataManager {
         mFirestore = FirebaseFirestore.getInstance();
         if (currentUser != null) {
             // Llama a loadUserData con un callback para manejar los datos del usuario una vez cargados
-            loadUserData(user -> {
+            loadUserData(loadedUser -> {
+                user = loadedUser;
+                Log.d("_TAG", "Datos del usuario: " + user.getUserName());
+                // Una vez que los datos del usuario se hayan cargado, carga las otras partes de la información del usuario
+                loadFriends(() -> {
+                    loadMyFriendRequests();
+                    loadSentFriendRequests();
+                });
             });
-            // Una vez que los datos del usuario se hayan cargado, carga las otras partes de la información del usuario
-            loadFriends(() -> {
-            });
-            loadMyFriendRequests();
-            loadSentFriendRequests();
         }
     }
 
@@ -106,7 +108,7 @@ public class UserDataManager {
         }
     }
 
-    public void loadUserData(OnUserLoadedCallback callback) {
+    private void loadUserData(OnUserLoadedCallback callback) {
         mFirestore.collection("users")
                 .whereEqualTo("email", currentUser.getEmail())
                 .get()
@@ -143,7 +145,7 @@ public class UserDataManager {
 
     /*---GESTION AMIGOS---*/
 
-    public void getUserByEmail(String email, OnUserLoadedCallback callback){
+    private void getUserByEmail(String email, OnUserLoadedCallback callback){
         mFirestore.collection("users")
                 .whereEqualTo("email", email)
                 .get()
@@ -157,10 +159,10 @@ public class UserDataManager {
                             String tag = document.getString("tag");
                             String password = document.getString("password");
 
-                            user = new User(userId, userEmail, userName, tag, password);
+                            User friend = new User(userId, userEmail, userName, tag, password);
 
                             // Llamar al método callback con el usuario cargado
-                            callback.onUserLoaded(user);
+                            callback.onUserLoaded(friend);
                         }
                     }
                 });
@@ -171,12 +173,12 @@ public class UserDataManager {
     }
 
     // Método para cargar la lista de amigos del usuario
-    public void loadFriends(OnFriendsLoadedCallback callback) {
+    private void loadFriends(OnFriendsLoadedCallback callback) {
         // Comprobar si currentUser no es nulo
         if (currentUser != null) {
             // Consulta para buscar si el currentUser está en algún campo friend_1
             mFirestore.collection("friends_request")
-                    .whereEqualTo("receiver_email", currentUser.getEmail())
+                    .whereEqualTo("receiver_email", user.getUserEmail())
                     .whereEqualTo("status", "accepted")
                     .get()
                     .addOnSuccessListener(querySnapshot -> {

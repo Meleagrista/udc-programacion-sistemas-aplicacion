@@ -1,6 +1,7 @@
 package com.cainzos.proyectofinal.fragments_friends;
 
 import android.os.Bundle;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,12 +74,6 @@ public class ListFriendsFragment extends Fragment {
         if (userDataManager.getUser() != null) {
             // User data is loaded, load friends list
             friends.forEach(this::addFriendToLayout);
-        } else {
-            // User data is not loaded yet, wait for callback
-            userDataManager.loadUserData(user -> {
-                // User data loaded, load friends list
-                friends.forEach(this::addFriendToLayout);
-            });
         }
     }
 
@@ -101,6 +96,10 @@ public class ListFriendsFragment extends Fragment {
         // Set friend's name in TextView
         String text = userName + " " + tag;
         textViewFriendName.setText(text);
+        // Set the text color
+        int textColorResId = R.color.white;
+        int textColor = ContextCompat.getColor(requireContext(), textColorResId);
+        textViewFriendName.setTextColor(textColor);
 
         // Handle click event on delete friend button
         buttonDelete.setOnClickListener(view -> {
@@ -115,8 +114,9 @@ public class ListFriendsFragment extends Fragment {
 
     // Method to set current user's name in EditText
     private void setUserNameInEditText() {
+        User user = userDataManager.getUser();
         if (currentUser != null) {
-            binding.editTextName.setText(currentUser.getEmail());
+            binding.editTextName.setText(user.getUserName());
         } else {
             binding.editTextName.setText(R.string.anonymous);
         }

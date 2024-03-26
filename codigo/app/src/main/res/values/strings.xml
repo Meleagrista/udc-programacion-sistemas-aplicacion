@@ -47,4 +47,9 @@
     <string name="friends_list_button">Amigos</string>
     <string name="requests_friends_button">Solicitudes de Amistad</string>
     <string name="anonymous">Anonymous</string>
+    <string name="user_name">Nombre de Usuario</string>
+
+    <!-- Strings ListPendingFragment -->
+    <string name="hint_text_request">Correo electronico de tu amigo</string>
+    <string name="send_request">Enviar solicitud</string>
 </resources>

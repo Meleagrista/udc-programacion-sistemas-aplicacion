@@ -99,11 +99,14 @@ public class ListPendingFragment extends Fragment {
 
             //If the user exists on the database
             if (userExists) {
-                FriendRequest friendRequest = userDataManager.getMyFriendRequestByEmail(email);
-                if(friendRequest == null){
-                    userDataManager.createFriendRequest(email, getActivity());
-                }else{
+                FriendRequest myRequest = userDataManager.getMyFriendRequestByEmail(email);
+                FriendRequest sentRequest = userDataManager.getSentFriendRequestByEmail(email);
+                if(sentRequest != null){
+                    Toast.makeText(getActivity(), "Ya has enviado una solicitud a este usuario", Toast.LENGTH_SHORT).show();
+                }else if(myRequest != null){
                     Toast.makeText(getActivity(), "Ya tienes una solicitud pendiente de este usuario", Toast.LENGTH_SHORT).show();
+                }else{
+                    userDataManager.createFriendRequest(email, getActivity());
                 }
             } else { //If the user doesn't exist on the database
                 Toast.makeText(getActivity(), "El usuario con el correo electrónico especificado no existe", Toast.LENGTH_SHORT).show();
