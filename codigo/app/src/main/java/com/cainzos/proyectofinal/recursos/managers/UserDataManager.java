@@ -38,7 +38,6 @@ public class UserDataManager {
             // Llama a loadUserData con un callback para manejar los datos del usuario una vez cargados
             loadUserData(loadedUser -> {
                 user = loadedUser;
-                Log.d("_TAG", "Datos del usuario: " + user.getUserName());
                 // Una vez que los datos del usuario se hayan cargado, carga las otras partes de la información del usuario
                 loadFriends(() -> {
                     loadMyFriendRequests();
@@ -180,7 +179,7 @@ public class UserDataManager {
     // Método para cargar la lista de amigos del usuario
     private void loadFriends(OnFriendsLoadedCallback callback) {
         // Comprobar si currentUser no es nulo
-        if (currentUser != null) {
+        if (currentUser != null && !currentUser.isAnonymous()) {
             // Consulta para buscar si el currentUser está en algún campo friend_1
             mFirestore.collection("friends_request")
                     .whereEqualTo("receiver_email", user.getUserEmail())
@@ -225,6 +224,8 @@ public class UserDataManager {
                         // Manejar error en la consulta de friend_2
                     });
 
+        }else if(currentUser != null && currentUser.isAnonymous()){
+            callback.onFriendsLoaded();
         }
     }
 
