@@ -47,15 +47,23 @@ public class ListPendingFragment extends Fragment {
         userDataManager = UserDataManager.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        binding.editTextEmail.setEnabled(false);
+
+        assert currentUser != null;
+
         //Establecer el listener para el boton de enviar solicitudes de amistad
         binding.buttonSendRequest.setOnClickListener(v -> {
-            String email = binding.editTextEmail.getText().toString().trim();
-
-            if (!isValidEmail(email)) { //Validar formato de email
-                Toast.makeText(getActivity(), "Por favor, ingresa un correo electrónico valido", Toast.LENGTH_SHORT).show();
-                return;
+            if(currentUser.isAnonymous()){
+                Toast.makeText(getActivity(), "Para poder enviar solicitudes tienes que iniciar sesion", Toast.LENGTH_SHORT).show();
+            }else{
+                binding.editTextEmail.setEnabled(true);
+                String email = binding.editTextEmail.getText().toString().trim();
+                if (!isValidEmail(email)) { //Validar formato de email
+                    Toast.makeText(getActivity(), "Por favor, ingresa un correo electrónico valido", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                sendFriendRequest(email); //Metodo para enviar solicitud de amistad
             }
-            sendFriendRequest(email); //Metodo para enviar solicitud de amistad
         });
 
         loadFriendRequestsList();

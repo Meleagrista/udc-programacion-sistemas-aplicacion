@@ -179,53 +179,54 @@ public class UserDataManager {
     // Método para cargar la lista de amigos del usuario
     private void loadFriends(OnFriendsLoadedCallback callback) {
         // Comprobar si currentUser no es nulo
-        if (currentUser != null && !currentUser.isAnonymous()) {
-            // Consulta para buscar si el currentUser está en algún campo friend_1
-            mFirestore.collection("friends_request")
-                    .whereEqualTo("receiver_email", user.getUserEmail())
-                    .whereEqualTo("status", "accepted")
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        if (!querySnapshot.isEmpty()) {
-                            // El currentUser está en algún campo friend_1
-                            for (QueryDocumentSnapshot document : querySnapshot) {
-                                String friendEmail = document.getString("sender_email");
-                                // Añadir el correo electrónico del amigo a la lista de amigos
-                                Log.d("UserDataManager", "Añadido amigo con correo: " + friendEmail);
-                                addFriendByEmail(friendEmail);
+        if(currentUser != null){
+            if(currentUser.isAnonymous()){
+                callback.onFriendsLoaded();
+            }else{
+                // Consulta para buscar si el currentUser está en algún campo friend_1
+                mFirestore.collection("friends_request")
+                        .whereEqualTo("receiver_email", user.getUserEmail())
+                        .whereEqualTo("status", "accepted")
+                        .get()
+                        .addOnSuccessListener(querySnapshot -> {
+                            if (!querySnapshot.isEmpty()) {
+                                // El currentUser está en algún campo friend_1
+                                for (QueryDocumentSnapshot document : querySnapshot) {
+                                    String friendEmail = document.getString("sender_email");
+                                    // Añadir el correo electrónico del amigo a la lista de amigos
+                                    Log.d("UserDataManager", "Añadido amigo con correo: " + friendEmail);
+                                    addFriendByEmail(friendEmail);
+                                }
                             }
-                        }
-                        // Llamar al callback una vez cargada la lista de amigos
-                        callback.onFriendsLoaded();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Manejar error en la consulta de friend_1
-                    });
+                            // Llamar al callback una vez cargada la lista de amigos
+                            callback.onFriendsLoaded();
+                        })
+                        .addOnFailureListener(e -> {
+                            // Manejar error en la consulta de friend_1
+                        });
 
-            // El currentUser no está en ningún campo friend_1, buscar en friend_2
-            mFirestore.collection("friends_request")
-                    .whereEqualTo("sender_email", currentUser.getEmail())
-                    .whereEqualTo("status", "accepted")
-                    .get()
-                    .addOnSuccessListener(querySnapshot2 -> {
-                        if (!querySnapshot2.isEmpty()) {
-                            // El currentUser está en algún campo friend_2
-                            for (QueryDocumentSnapshot document : querySnapshot2) {
-                                String friendEmail = document.getString("receiver_email");
-                                // Añadir el correo electrónico del amigo a la lista de amigos
-                                Log.d("UserDataManager", "Añadido amigo con correo: " + friendEmail);
-                                addFriendByEmail(friendEmail);
+                // El currentUser no está en ningún campo friend_1, buscar en friend_2
+                mFirestore.collection("friends_request")
+                        .whereEqualTo("sender_email", currentUser.getEmail())
+                        .whereEqualTo("status", "accepted")
+                        .get()
+                        .addOnSuccessListener(querySnapshot2 -> {
+                            if (!querySnapshot2.isEmpty()) {
+                                // El currentUser está en algún campo friend_2
+                                for (QueryDocumentSnapshot document : querySnapshot2) {
+                                    String friendEmail = document.getString("receiver_email");
+                                    // Añadir el correo electrónico del amigo a la lista de amigos
+                                    Log.d("UserDataManager", "Añadido amigo con correo: " + friendEmail);
+                                    addFriendByEmail(friendEmail);
+                                }
                             }
-                        }
-                        // Llamar al callback una vez cargada la lista de amigos
-                        callback.onFriendsLoaded();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Manejar error en la consulta de friend_2
-                    });
-
-        }else if(currentUser != null && currentUser.isAnonymous()){
-            callback.onFriendsLoaded();
+                            // Llamar al callback una vez cargada la lista de amigos
+                            callback.onFriendsLoaded();
+                        })
+                        .addOnFailureListener(e -> {
+                            // Manejar error en la consulta de friend_2
+                        });
+            }
         }
     }
 
