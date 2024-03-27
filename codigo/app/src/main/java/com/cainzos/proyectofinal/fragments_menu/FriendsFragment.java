@@ -13,7 +13,7 @@ import com.cainzos.proyectofinal.R;
 import com.cainzos.proyectofinal.databinding.FragmentFriendsBinding;
 import com.cainzos.proyectofinal.fragments_friends.ListFriendsFragment;
 import com.cainzos.proyectofinal.fragments_friends.ListPendingFragment;
-import com.cainzos.proyectofinal.recursos.UserDataManager;
+import com.cainzos.proyectofinal.recursos.managers.UserDataManager;
 import com.google.firebase.auth.FirebaseUser;
 
 public class FriendsFragment extends Fragment {

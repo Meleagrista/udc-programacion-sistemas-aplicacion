@@ -15,7 +15,7 @@ import com.cainzos.proyectofinal.databinding.ActivityMenuBinding;
 import com.cainzos.proyectofinal.fragments_menu.FriendsFragment;
 import com.cainzos.proyectofinal.fragments_menu.GamemodeFragment;
 import com.cainzos.proyectofinal.fragments_menu.RoomFragment;
-import com.cainzos.proyectofinal.recursos.UserDataManager;
+import com.cainzos.proyectofinal.recursos.managers.UserDataManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

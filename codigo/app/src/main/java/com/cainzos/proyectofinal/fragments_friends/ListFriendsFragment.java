@@ -14,8 +14,8 @@ import androidx.fragment.app.Fragment;
 import com.cainzos.proyectofinal.R;
 import com.cainzos.proyectofinal.databinding.ActivityListFriendsFragmentBinding;
 import com.cainzos.proyectofinal.databinding.FriendItemBinding;
-import com.cainzos.proyectofinal.recursos.User;
-import com.cainzos.proyectofinal.recursos.UserDataManager;
+import com.cainzos.proyectofinal.recursos.objects.User;
+import com.cainzos.proyectofinal.recursos.managers.UserDataManager;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;

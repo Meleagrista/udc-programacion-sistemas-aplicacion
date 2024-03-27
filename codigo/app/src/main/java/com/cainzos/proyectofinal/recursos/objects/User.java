@@ -1,4 +1,4 @@
-package com.cainzos.proyectofinal.recursos;
+package com.cainzos.proyectofinal.recursos.objects;
 
 public class User {
     // Variables de datos de usuario

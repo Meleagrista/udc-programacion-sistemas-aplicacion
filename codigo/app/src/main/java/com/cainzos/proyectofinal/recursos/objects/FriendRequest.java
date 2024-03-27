@@ -1,6 +1,6 @@
-package com.cainzos.proyectofinal.recursos;
+package com.cainzos.proyectofinal.recursos.objects;
 
-import com.cainzos.proyectofinal.recursos.User;
+import com.cainzos.proyectofinal.recursos.objects.User;
 
 public class FriendRequest {
     private final User user;

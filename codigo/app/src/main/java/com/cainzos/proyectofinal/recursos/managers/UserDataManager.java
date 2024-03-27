@@ -1,9 +1,11 @@
-package com.cainzos.proyectofinal.recursos;
+package com.cainzos.proyectofinal.recursos.managers;
 
 import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.cainzos.proyectofinal.recursos.objects.FriendRequest;
+import com.cainzos.proyectofinal.recursos.objects.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserDataManager {
 
@@ -102,9 +105,11 @@ public class UserDataManager {
                     .addOnFailureListener(e ->
                             // Show error message if user search in the database fails
                             Toast.makeText(activity, "Error al buscar el usuario en la base de datos: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-        } else {
+        } else if(currentUser == null){
             // Show error message if current user email is null
             Toast.makeText(activity, "Correo electrónico del usuario nulo", Toast.LENGTH_SHORT).show();
+        }else if(Objects.equals(newName, user.getUserName())){
+            Toast.makeText(activity, "El usuario introducido es el mismo que ya tienes", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -246,13 +251,13 @@ public class UserDataManager {
 
         // Realizar una consulta para buscar el documento que representa la amistad entre el usuario actual y el amigo que se va a eliminar
         mFirestore.collection("friends_request")
-                .whereEqualTo("receiver_email", currentUser.getEmail())
+                .whereEqualTo("receiver_email", user.getUserEmail())
                 .whereEqualTo("sender_email", friendEmail)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                         // Eliminar el documento de Firestore
-                        sentRequests.remove(getSentFriendRequestByEmail(friendEmail));
+                        myRequests.remove(getSentFriendRequestByEmail(friendEmail));
                         mFirestore.collection("friends_request").document(document.getId()).delete();
                     }
                 });
@@ -260,12 +265,12 @@ public class UserDataManager {
         // Realizar una consulta para buscar el documento que representa la amistad entre el usuario actual y el amigo que se va a eliminar
         mFirestore.collection("friends_request")
                 .whereEqualTo("receiver_email", friendEmail)
-                .whereEqualTo("sender_email", currentUser.getEmail())
+                .whereEqualTo("sender_email", user.getUserEmail())
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                         // Eliminar el documento de Firestore
-                        myRequests.remove(getMyFriendRequestByEmail(friendEmail));
+                        sentRequests.remove(getMyFriendRequestByEmail(friendEmail));
                         mFirestore.collection("friends_request").document(document.getId()).delete();
                     }
                 });
@@ -333,9 +338,13 @@ public class UserDataManager {
     //Metodo para crear una solicitud de amistad
     public void createFriendRequest(String email, Activity activity) {
         Map<String, Object> friendRequestData = new HashMap<>();
-        friendRequestData.put("sender_email", currentUser.getEmail());
+        friendRequestData.put("sender_email", user.getUserEmail());
         friendRequestData.put("receiver_email", email);
         friendRequestData.put("status", "pending");
+
+        getUserByEmail(email, friend ->{
+            sentRequests.add(new FriendRequest(friend, "pending"));
+        });
 
         // Add friend request to Firestore
         mFirestore.collection("friends_request")
