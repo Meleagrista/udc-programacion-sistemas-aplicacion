@@ -1,9 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ProfileUserActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="YOUR PROFILE"
+        android:textSize="30sp"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+         />
+
+    <ImageView
+
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/logo_app"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp" />
+
+    <!-- Campo de texto para el nombre -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <EditText
+            android:id="@+id/UserNameEditText"
+            android:layout_width="250dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:hint="Usuario"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/editUserName"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@android:drawable/ic_menu_edit" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <EditText
+            android:id="@+id/UserExtraFieldEditText"
+            android:layout_width="250dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:hint="Equipo"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/editExtraField"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@android:drawable/ic_menu_edit" />
+
+    </LinearLayout>
+
+
+    <!-- Campo de texto para la descripción -->
+
+
+</LinearLayout>

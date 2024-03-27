@@ -1,5 +1,6 @@
 package com.cainzos.proyectofinal;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -7,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -97,12 +99,27 @@ public class MenuActivity extends AppCompatActivity {
 
     /*---Gestionar las acciones de los botones del menu al ser pulsados---*/
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        Log.d("_TAG","opciones");
 
         //Gestionamos las distintas opciones del menu de tres puntos
         if (id == R.id.action_logout) {
             logout();
+            return true;
+        } else if(id == R.id.action_settings){
+            Log.d("_TAG","Abriendo ajustes");
+            return true;
+        } else if(id == R.id.action_help){
+            Log.d("_TAG","Abriendo ayuda");
+            return true;
+        } else if(id == R.id.action_profile){
+            Log.d("_TAG","Abriendo perfil");
+            Intent intent = new Intent(MenuActivity.this, ProfileUserActivity.class);
+            startActivity(intent);
+            return true;
+        } else if(id == R.id.action_filters){
+            Log.d("_TAG","Abriendo filtros");
             return true;
         }
 

@@ -52,4 +52,6 @@
     <!-- Strings ListPendingFragment -->
     <string name="hint_text_request">Correo electronico de tu amigo</string>
     <string name="send_request">Enviar solicitud</string>
+    <string name="defaultTeam">TeamRon</string>
+    <string name="defaultUserName">Juanito24</string>
 </resources>
