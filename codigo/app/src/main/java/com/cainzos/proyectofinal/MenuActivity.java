@@ -52,6 +52,8 @@ public class MenuActivity extends AppCompatActivity {
             binding.bottomNavigationView.setSelectedItemId(R.id.gamemode_item); //Boton seleccionado de inicio
         }
 
+
+
         /*---Gestion de los distintos botones de la bottom Navigation View---*/
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -118,7 +120,7 @@ public class MenuActivity extends AppCompatActivity {
     /*---Inflar el menu de tres puntos---*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_gamemode, menu);
+        getMenuInflater().inflate(R.menu.main_nav_menu, menu);
         return true;
     }
 
@@ -128,24 +130,9 @@ public class MenuActivity extends AppCompatActivity {
         int id = item.getItemId();
         Log.d("_TAG","opciones");
 
-        //Gestionamos las distintas opciones del menu de tres puntos
-        if (id == R.id.action_logout) {
-            logout();
-            return true;
-        } else if(id == R.id.action_settings){
-            Log.d("_TAG","Abriendo ajustes");
-            return true;
-        } else if(id == R.id.action_help){
-            Log.d("_TAG","Abriendo ayuda");
-            return true;
-        } else if(id == R.id.action_profile){
-            Log.d("_TAG","Abriendo perfil");
-            Intent intent = new Intent(MenuActivity.this, ProfileUserActivity.class);
-            startActivity(intent);
-            return true;
-        } else if(id == R.id.action_filters){
-            Log.d("_TAG","Abriendo filtros");
-            return true;
+        if (id == R.id.nav_home){
+            Log.d("_TAG", "boton home menu");
+            Toast.makeText(this, "dvgejkbdxiuek", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);

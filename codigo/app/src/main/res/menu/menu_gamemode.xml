@@ -1,5 +1,15 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Aquí añadimos el ítem en la barra superior a la izquierda -->
+    <item
+        android:id="@+id/action_home"
+        android:title="Inicio"
+        android:icon="@drawable/logo_app"
+        app:showAsAction="always"
+        android:orderInCategory="1"
+        />
+
     <item
         android:id="@+id/action_settings"
         android:title="Settings"
