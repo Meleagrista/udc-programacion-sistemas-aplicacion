@@ -50,19 +50,24 @@ public class ListFriendsFragment extends Fragment {
         return binding.getRoot();
     }
 
-    // Method to load user's friends list
     private void loadFriends() {
         List<User> friends = userDataManager.getFriends();
         // Check if user data manager has finished loading user data
-        if (userDataManager.getUser() != null) {
+        if (currentUser != null) {
             if(currentUser.isAnonymous()){
-                Toast.makeText(getActivity(), "Inicia sesion para poder añadir amigos", Toast.LENGTH_SHORT).show();
-            }else{
+                binding.containerFriends.invalidate();
+                // User is anonymous, show the prompt
+                binding.textViewSignInPrompt.setVisibility(View.VISIBLE);
+                binding.textViewSignInPrompt.setText("INICIA SESION");
+            } else {
+                // User is not anonymous, load friends list
+                binding.textViewSignInPrompt.setVisibility(View.GONE);
                 // User data is loaded, load friends list
                 friends.forEach(this::addFriendToLayout);
             }
         }
     }
+
 
     // Method to add a friend to the layout
     private void addFriendToLayout(User friend) {
