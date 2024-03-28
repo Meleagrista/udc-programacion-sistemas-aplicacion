@@ -3,13 +3,19 @@
     <item
         android:id="@+id/friends_item"
         android:title="@string/friends_fragment"
-        android:icon="@drawable/perfil_amigos" />
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/custom_icon_social" />
     <item
         android:id="@+id/gamemode_item"
         android:title="@string/gamemode_fragment"
-        android:icon="@drawable/logo_app"/>
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/custom_icon_home"/>
     <item
         android:id="@+id/room_item"
         android:title="@string/shop_fragment"
-        android:icon="@drawable/perfil_tienda" />
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/custom_icon_multiplayer" />
 </menu>
