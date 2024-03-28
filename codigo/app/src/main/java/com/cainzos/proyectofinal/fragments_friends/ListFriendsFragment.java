@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -48,16 +49,21 @@ public class ListFriendsFragment extends Fragment {
 
         // Handling click events on edit user name button
         binding.editUserName.setOnClickListener(v -> {
-            if (!binding.editTextName.isEnabled()) {
-                // Enable editing mode
-                binding.editTextName.setEnabled(true);
-                binding.editUserName.setText(R.string.aceptar);
-            } else {
-                // Save new name and disable editing mode
-                String newName = binding.editTextName.getText().toString().trim();
-                userDataManager.updateUserName(newName, currentUser.getEmail(), getActivity());
-                binding.editTextName.setEnabled(false);
-                binding.editUserName.setText(R.string.editar);
+
+            if(currentUser.isAnonymous()){
+                Toast.makeText(getActivity(), "Inicia sesion para poder tener un nombre de usuario", Toast.LENGTH_SHORT).show();
+            }else{
+                if (!binding.editTextName.isEnabled()) {
+                    // Enable editing mode
+                    binding.editTextName.setEnabled(true);
+                    binding.editUserName.setText(R.string.aceptar);
+                } else {
+                    // Save new name and disable editing mode
+                    String newName = binding.editTextName.getText().toString().trim();
+                    userDataManager.updateUserName(newName, currentUser.getEmail(), getActivity());
+                    binding.editTextName.setEnabled(false);
+                    binding.editUserName.setText(R.string.editar);
+                }
             }
         });
 
@@ -72,8 +78,12 @@ public class ListFriendsFragment extends Fragment {
         List<User> friends = userDataManager.getFriends();
         // Check if user data manager has finished loading user data
         if (userDataManager.getUser() != null) {
-            // User data is loaded, load friends list
-            friends.forEach(this::addFriendToLayout);
+            if(currentUser.isAnonymous()){
+                Toast.makeText(getActivity(), "Inicia sesion para poder añadir amigos", Toast.LENGTH_SHORT).show();
+            }else{
+                // User data is loaded, load friends list
+                friends.forEach(this::addFriendToLayout);
+            }
         }
     }
 
@@ -115,7 +125,7 @@ public class ListFriendsFragment extends Fragment {
     // Method to set current user's name in EditText
     private void setUserNameInEditText() {
         User user = userDataManager.getUser();
-        if (currentUser != null) {
+        if (currentUser != null && !currentUser.isAnonymous()) {
             binding.editTextName.setText(user.getUserName());
         } else {
             binding.editTextName.setText(R.string.anonymous);
