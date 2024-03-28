@@ -39,33 +39,10 @@ public class ListFriendsFragment extends Fragment {
         binding = ActivityListFriendsFragmentBinding.inflate(getLayoutInflater());
         // Inflating friend item layout
         friends_binding = FriendItemBinding.inflate(getLayoutInflater());
-        // Disabling name editing initially
-        binding.editTextName.setEnabled(false);
 
         // Setting current user's name in EditText
         userDataManager = UserDataManager.getInstance();
         currentUser = userDataManager.getFirebaseUser();
-        setUserNameInEditText();
-
-        // Handling click events on edit user name button
-        binding.editUserName.setOnClickListener(v -> {
-
-            if(currentUser.isAnonymous()){
-                Toast.makeText(getActivity(), "Inicia sesion para poder tener un nombre de usuario", Toast.LENGTH_SHORT).show();
-            }else{
-                if (!binding.editTextName.isEnabled()) {
-                    // Enable editing mode
-                    binding.editTextName.setEnabled(true);
-                    binding.editUserName.setText(R.string.aceptar);
-                } else {
-                    // Save new name and disable editing mode
-                    String newName = binding.editTextName.getText().toString().trim();
-                    userDataManager.updateUserName(newName, currentUser.getEmail(), getActivity());
-                    binding.editTextName.setEnabled(false);
-                    binding.editUserName.setText(R.string.editar);
-                }
-            }
-        });
 
         // Loading friends list
         loadFriends();
@@ -120,15 +97,5 @@ public class ListFriendsFragment extends Fragment {
 
         // Add friend view to friends container
         binding.containerFriends.addView(friendItemView);
-    }
-
-    // Method to set current user's name in EditText
-    private void setUserNameInEditText() {
-        User user = userDataManager.getUser();
-        if (currentUser != null && !currentUser.isAnonymous()) {
-            binding.editTextName.setText(user.getUserName());
-        } else {
-            binding.editTextName.setText(R.string.anonymous);
-        }
     }
 }

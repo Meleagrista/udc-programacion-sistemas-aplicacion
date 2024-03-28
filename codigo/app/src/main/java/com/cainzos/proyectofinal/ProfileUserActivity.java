@@ -28,17 +28,16 @@ public class ProfileUserActivity extends AppCompatActivity implements View.OnCli
         binding = ActivityProfileUserBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        userDataManager = UserDataManager.getInstance();
-        currentUser = userDataManager.getFirebaseUser();
-
         nameEditText = binding.UserNameEditText;
         nameEditText.setEnabled(false);
         extraEditText = binding.UserExtraFieldEditText;
         extraEditText.setEnabled(false);
 
+        userDataManager = UserDataManager.getInstance();
+        currentUser = userDataManager.getFirebaseUser();
         if(!currentUser.isAnonymous()){
             user = userDataManager.getUser();
-            nameEditText.setText(user.getUserName());
+            setUserNameInEditText();
         }
 
         editUsernameButton = binding.editUserName;
@@ -53,10 +52,14 @@ public class ProfileUserActivity extends AppCompatActivity implements View.OnCli
             if(currentUser.isAnonymous()){
                 Toast.makeText(this, "Inicia sesion para modificar el extra", Toast.LENGTH_SHORT).show();
             }else{
-                if(!extraEditText.isEnabled()) {
+                if (!extraEditText.isEnabled()) {
+                    // Enable editing mode
+                    Toast.makeText(this, "Modo edicion habilitado", Toast.LENGTH_SHORT).show();
                     extraEditText.setEnabled(true);
-                    Toast.makeText(this, "Editing extra is now allowed", Toast.LENGTH_SHORT).show();
                 } else {
+                    // Save new name and disable editing mode
+                    String newName = extraEditText.getText().toString().trim();
+                    extraEditText.setText(newName);
                     extraEditText.setEnabled(false);
                 }
             }
@@ -64,13 +67,27 @@ public class ProfileUserActivity extends AppCompatActivity implements View.OnCli
             if(currentUser.isAnonymous()){
                 Toast.makeText(this, "Inicia sesion para modificar el nombre de usuario", Toast.LENGTH_SHORT).show();
             }else{
-                if(!nameEditText.isEnabled()) {
+                if (!nameEditText.isEnabled()) {
+                    // Enable editing mode
+                    Toast.makeText(this, "Modo edicion habilitado", Toast.LENGTH_SHORT).show();
                     nameEditText.setEnabled(true);
-                    Toast.makeText(this, "Editing username is now allowed", Toast.LENGTH_SHORT).show();
                 } else {
+                    // Save new name and disable editing mode
+                    String newName = nameEditText.getText().toString().trim();
+                    userDataManager.updateUserName(newName, currentUser.getEmail(), this);
+                    nameEditText.setText(newName);
                     nameEditText.setEnabled(false);
                 }
             }
+        }
+    }
+
+    // Method to set current user's name in EditText
+    private void setUserNameInEditText() {
+        if (currentUser != null && !currentUser.isAnonymous()) {
+            nameEditText.setText(user.getUserName());
+        } else {
+            nameEditText.setText(R.string.anonymous);
         }
     }
 }
