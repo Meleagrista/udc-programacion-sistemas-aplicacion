@@ -16,14 +16,17 @@
         android:layout_marginTop="50dp"
          />
 
-    <ImageView
-
+    <ImageButton
+        android:id="@+id/profileImage"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/logo_app"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="50dp" />
+        android:layout_marginBottom="50dp"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"/>
+
 
     <!-- Campo de texto para el nombre -->
     <LinearLayout
@@ -39,7 +42,7 @@
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content"
-            android:hint="@string/defaultUserName"
+            android:hint="@string/anonymous"
             android:textColorHint="@color/white"
             android:textColor="@color/white"
             />
