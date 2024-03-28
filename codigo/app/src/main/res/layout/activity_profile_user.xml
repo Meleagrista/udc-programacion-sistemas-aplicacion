@@ -7,14 +7,12 @@
     tools:context=".ProfileUserActivity"
     android:background="@color/dark_gray">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="YOUR PROFILE"
-        android:textSize="30sp"
-        android:textColor="@android:color/white"
-        android:gravity="center"
-        android:layout_gravity="center"
+    <ImageView
+
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:src="@drawable/usuario_banner"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
          />
 
@@ -24,7 +22,7 @@
         android:layout_height="200dp"
         android:src="@drawable/logo_app"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="50dp" />
 
     <!-- Campo de texto para el nombre -->

@@ -54,4 +54,5 @@
     <string name="send_request">Enviar solicitud</string>
     <string name="defaultTeam">TeamRon</string>
     <string name="defaultUserName">Juanito24</string>
+    <string name="profile_title">USER PROFILE</string>
 </resources>
