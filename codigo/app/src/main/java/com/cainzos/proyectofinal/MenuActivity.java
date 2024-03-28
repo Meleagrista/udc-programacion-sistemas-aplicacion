@@ -21,12 +21,15 @@ import com.cainzos.proyectofinal.recursos.managers.UserDataManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class MenuActivity extends AppCompatActivity {
 
     /*---Bindings---*/
     private ActivityMenuBinding binding;
     FirebaseUser currentUser;
     private UserDataManager userDataManager;
+    private Fragment lastFragment;
 
     /*---Variable para gestionar los distintos fragmentos que se pueden mostrar---*/
     private FragmentManager fragmentManager;
@@ -45,6 +48,7 @@ public class MenuActivity extends AppCompatActivity {
         /*---Valor de los parametros cuando se inicia la actividad---*/
         if (savedInstanceState == null) {
             replaceFragment(new GamemodeFragment(), "gamemode");
+            lastFragment = new GamemodeFragment();
             binding.bottomNavigationView.setSelectedItemId(R.id.gamemode_item); //Boton seleccionado de inicio
         }
 
@@ -60,35 +64,56 @@ public class MenuActivity extends AppCompatActivity {
                 if(currentUser.isAnonymous()){
                     Toast.makeText(this, "Inicia sesion para poder unirte a salas", Toast.LENGTH_SHORT).show();
                 }else{
-                    replaceFragment(new RoomFragment(), "shop");
+                    replaceFragment(new RoomFragment(), "room");
                 }
             }
             return true;
         });
+
     }
 
     /*---Funcion que se encarga de cambiar el fragmento que se ve---*/
     private void replaceFragment(Fragment fragment, String tag) {
-        Fragment existingFragment = fragmentManager.findFragmentByTag(tag);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (existingFragment != null) {
-            // Si el fragmento ya está presente, lo muestra
-            fragmentTransaction.show(existingFragment);
-        } else {
-            // Si el fragmento no está presente, lo añade al contenedor
-            fragmentTransaction.replace(R.id.fragment_container, fragment, tag);
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        if (currentFragment != null) {
+            fragmentTransaction.hide(currentFragment);
         }
 
-        // Oculta otros fragmentos en la transacción
-        for (Fragment fragmentInStack : fragmentManager.getFragments()) {
-            if (fragmentInStack != null && !fragmentInStack.getTag().equals(tag)) {
-                fragmentTransaction.hide(fragmentInStack);
+        // Initialize the animation variables
+        int enterAnimation = 0, exitAnimation = 0;
+
+        // Determine which was the last fragment showed
+        if (lastFragment instanceof FriendsFragment) {
+            if(Objects.equals(tag, "gamemode") || Objects.equals(tag, "room")){
+                enterAnimation = R.anim.slide_in_right;
+                exitAnimation = R.anim.slide_out_left;
+            }
+        } else if (lastFragment instanceof RoomFragment) {
+            if(Objects.equals(tag, "friends") || Objects.equals(tag, "gamemode")){
+                enterAnimation = R.anim.slide_in_left;
+                exitAnimation = R.anim.slide_out_right;
+            }
+        } else if(lastFragment instanceof GamemodeFragment){
+            if(Objects.equals(tag, "friends")){
+                enterAnimation = R.anim.slide_in_left;
+                exitAnimation = R.anim.slide_out_right;
+            }else if(Objects.equals(tag, "room")){
+                enterAnimation = R.anim.slide_in_right;
+                exitAnimation = R.anim.slide_out_left;
             }
         }
 
+        // Execute the animations
+        fragmentTransaction.setCustomAnimations(enterAnimation, exitAnimation);
+        fragmentTransaction.add(R.id.fragment_container, fragment, tag);
         fragmentTransaction.commit();
+
+        // Update the last fragment showed
+        lastFragment = fragment;
     }
+
 
     /*---Inflar el menu de tres puntos---*/
     @Override
